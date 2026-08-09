@@ -2,8 +2,8 @@ import { Pool } from 'mysql2/promise';
 import argon2 from 'argon2';
 import { v7 as uuidv7 } from 'uuid';
 
-import { Seeder } from '../Seeder';
 import { BaseSeeder } from '../BaseSeeder';
+import { Seeder } from '../Seeder';
 
 export class TestAccountSeeder
 extends BaseSeeder
@@ -68,12 +68,13 @@ implements Seeder
                     id,
                     email,
                     password_hash,
-                    first_name,
-                    last_name,
+                    firstname,
+                    lastname,
                     phone,
                     is_active,
-                    last_company_id,
+                    email_verified_at,
                     last_login_at,
+                    last_company_id,
                     created_at,
                     updated_at,
                     deleted_at,
@@ -87,9 +88,10 @@ implements Seeder
                     ?,
                     NULL,
                     TRUE,
-                    NULL,
-                    NULL,
                     UTC_TIMESTAMP(6),
+                        NULL,
+                        NULL,
+                        UTC_TIMESTAMP(6),
                         UTC_TIMESTAMP(6),
                         NULL,
                         0
@@ -219,6 +221,7 @@ implements Seeder
             throw new Error(
                 'Le rôle OWNER est introuvable. Lance d’abord le seeder Roles.'
             );
+
         }
 
         const roleId = roles[0].id;
@@ -295,6 +298,7 @@ implements Seeder
             console.log(
                 '   ℹ️ Association utilisateur / entreprise déjà présente'
             );
+
         }
 
         /*

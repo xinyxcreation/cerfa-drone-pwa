@@ -1,10 +1,16 @@
 CREATE TABLE prefectures (
     id CHAR(36) NOT NULL,
 
-    code VARCHAR(3) NOT NULL,
+    code VARCHAR(20) NOT NULL,
+    department_code VARCHAR(3) NOT NULL,
     department_name VARCHAR(100) NOT NULL,
 
     prefecture_name VARCHAR(150) NOT NULL,
+
+    address VARCHAR(255) NULL,
+    postal_code VARCHAR(10) NULL,
+    city VARCHAR(100) NULL,
+    phone VARCHAR(30) NULL,
 
     email VARCHAR(255) NULL,
     website_url VARCHAR(255) NULL,
@@ -25,6 +31,7 @@ CREATE TABLE prefectures (
     CONSTRAINT uq_prefectures_code
         UNIQUE (code),
 
+    INDEX idx_prefectures_department_code (department_code),
     INDEX idx_prefectures_department_name (department_name),
     INDEX idx_prefectures_active (is_active),
     INDEX idx_prefectures_deleted_at (deleted_at),

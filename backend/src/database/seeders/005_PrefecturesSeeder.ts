@@ -9,15 +9,21 @@ interface PrefectureJson {
 
     code: string;
 
+    department_code: string;
+
     department_name: string;
 
-    prefecture_name: string;
+    name: string;
+
+    address: string;
+
+    postal_code: string;
+
+    city: string;
+
+    phone: string | null;
 
     email: string | null;
-
-    website_url: string | null;
-
-    legal_response_days?: number;
 
 }
 
@@ -55,25 +61,41 @@ implements Seeder
                 'code',
                 prefecture.code,
                 {
-                    code: prefecture.code,
+                    code:
+                    prefecture.code,
+
+                    department_code:
+                    prefecture.department_code,
 
                     department_name:
                     prefecture.department_name,
 
                     prefecture_name:
-                    prefecture.prefecture_name,
+                    prefecture.name,
+
+                    address:
+                    prefecture.address,
+
+                    postal_code:
+                    prefecture.postal_code,
+
+                    city:
+                    prefecture.city,
+
+                    phone:
+                    prefecture.phone ?? null,
 
                     email:
                     prefecture.email ?? null,
 
                     website_url:
-                    prefecture.website_url ?? null,
+                    null,
 
                     legal_response_days:
-                    prefecture.legal_response_days ?? 10,
+                    10,
 
-                    is_active: true
-
+                    is_active:
+                    true
                 }
             );
 
