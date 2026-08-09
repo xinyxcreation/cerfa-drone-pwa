@@ -1,0 +1,44 @@
+{
+  "name": "cerfa-drone-backend",
+  "version": "1.0.0",
+  "description": "CERFA Drone Backend",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "migrate": "tsx src/database/migrate.ts",
+    "seed": "tsx src/database/seed.ts",
+    "download:prefectures": "tsx src/database/tools/DownloadPrefectures.ts"
+  },
+  "keywords": [
+    "fastify",
+    "mariadb",
+    "flutter",
+    "cerfa",
+    "drone"
+  ],
+  "author": "Romain Davy",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@fastify/helmet": "^13.1.0",
+    "@fastify/jwt": "^10.2.1",
+    "@fastify/sensible": "^6.0.4",
+    "@fastify/swagger": "^9.8.1",
+    "@fastify/swagger-ui": "^6.1.1",
+    "argon2": "^0.45.1",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.11.2",
+    "fastify-plugin": "^6.0.0",
+    "mysql2": "^3.23.2",
+    "uuid": "^14.0.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

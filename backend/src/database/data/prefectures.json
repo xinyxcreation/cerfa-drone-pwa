@@ -1,0 +1,35 @@
+[
+    {
+        "code": "44",
+        "department_code": "44",
+        "department_name": "Loire-Atlantique",
+        "name": "Préfecture de la Loire-Atlantique",
+        "address": "6 quai Ceineray",
+        "postal_code": "44035",
+        "city": "Nantes",
+        "phone": "02 40 41 20 20",
+        "email": "prefecture@loire-atlantique.gouv.fr"
+    },
+    {
+        "code": "44-CHB",
+        "department_code": "44",
+        "department_name": "Loire-Atlantique",
+        "name": "Sous-préfecture de Châteaubriant-Ancenis",
+        "address": "22 rue Gabriel Delatour",
+        "postal_code": "44146",
+        "city": "Châteaubriant",
+        "phone": "02 40 81 50 00",
+        "email": "sp-chateaubriant@loire-atlantique.gouv.fr"
+    },
+    {
+        "code": "44-STN",
+        "department_code": "44",
+        "department_name": "Loire-Atlantique",
+        "name": "Sous-préfecture de Saint-Nazaire",
+        "address": "1 rue des Frères Pereire",
+        "postal_code": "44600",
+        "city": "Saint-Nazaire",
+        "phone": "02 40 00 72 72",
+        "email": "sp-saint-nazaire@loire-atlantique.gouv.fr"
+    }
+]
