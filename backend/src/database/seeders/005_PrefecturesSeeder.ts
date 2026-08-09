@@ -8,21 +8,24 @@ import { Seeder } from '../Seeder';
 interface PrefectureJson {
 
     code: string;
-    department_code: string;
+
     department_name: string;
 
-    name: string;
+    prefecture_name: string;
 
-    address: string;
-
-    postal_code: string;
-    city: string;
-
-    phone: string | null;
     email: string | null;
+
+    website_url: string | null;
+
+    legal_response_days?: number;
+
 }
 
-export class PrefecturesSeeder extends BaseSeeder implements Seeder {
+export class PrefecturesSeeder
+extends BaseSeeder
+implements Seeder
+{
+    public readonly order = 5;
 
     public readonly name = 'Prefectures';
 
@@ -41,7 +44,8 @@ export class PrefecturesSeeder extends BaseSeeder implements Seeder {
             'utf8'
         );
 
-        const prefectures = JSON.parse(json) as PrefectureJson[];
+        const prefectures =
+        JSON.parse(json) as PrefectureJson[];
 
         for (const prefecture of prefectures) {
 
@@ -53,27 +57,27 @@ export class PrefecturesSeeder extends BaseSeeder implements Seeder {
                 {
                     code: prefecture.code,
 
-                    department_code: prefecture.department_code,
-                    department_name: prefecture.department_name,
+                    department_name:
+                    prefecture.department_name,
 
-                    name: prefecture.name,
+                    prefecture_name:
+                    prefecture.prefecture_name,
 
-                    address: prefecture.address,
+                    email:
+                    prefecture.email ?? null,
 
-                    postal_code: prefecture.postal_code,
-                    city: prefecture.city,
+                    website_url:
+                    prefecture.website_url ?? null,
 
-                    phone: prefecture.phone,
-                    email: prefecture.email,
+                    legal_response_days:
+                    prefecture.legal_response_days ?? 10,
 
-                    is_active: true,
+                    is_active: true
 
-                    sort_order: Number(prefecture.department_code)
                 }
             );
 
         }
 
     }
-
 }
