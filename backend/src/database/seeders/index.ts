@@ -1,14 +1,14 @@
-import { Seeder } from '../Seeder';
+import { Seeder } from '../Seeder.js';
 
-import { RolesSeeder } from './001_RolesSeeder';
-import { EntityTypesSeeder } from './002_EntityTypesSeeder';
-import { DocumentTypesSeeder } from './003_DocumentTypesSeeder';
-import { CertificationTypesSeeder } from './004_CertificationTypesSeeder';
-import { PrefecturesSeeder } from './005_PrefecturesSeeder';
-import { MissionStatusesSeeder } from './006_MissionStatusesSeeder';
-import { CerfaStatusesSeeder } from './007_CerfaStatusesSeeder';
-import { NotificationTypesSeeder } from './008_NotificationTypesSeeder';
-import { AuditActionsSeeder } from './009_AuditActionsSeeder';
+import { RolesSeeder } from './001_RolesSeeder.js';
+import { EntityTypesSeeder } from './002_EntityTypesSeeder.js';
+import { DocumentTypesSeeder } from './003_DocumentTypesSeeder.js';
+import { CertificationTypesSeeder } from './004_CertificationTypesSeeder.js';
+import { PrefecturesSeeder } from './005_PrefecturesSeeder.js';
+import { MissionStatusesSeeder } from './006_MissionStatusesSeeder.js';
+import { CerfaStatusesSeeder } from './007_CerfaStatusesSeeder.js';
+import { NotificationTypesSeeder } from './008_NotificationTypesSeeder.js';
+import { AuditActionsSeeder } from './009_AuditActionsSeeder.js';
 
 export const seeders: Seeder[] = [
 

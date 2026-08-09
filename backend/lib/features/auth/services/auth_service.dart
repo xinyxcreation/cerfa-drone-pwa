@@ -17,10 +17,6 @@ class AuthException implements Exception {
 class AuthService {
   const AuthService();
 
-  // ============================================================
-  // LOGIN
-  // ============================================================
-
   Future<LoginResponse> login({
     required String email,
     required String password,
@@ -34,7 +30,8 @@ class AuthService {
         },
       );
 
-      final data = response.data as Map<String, dynamic>;
+      final data =
+      response.data as Map<String, dynamic>;
 
       if (data['success'] != true) {
         throw AuthException(
@@ -43,7 +40,8 @@ class AuthService {
         );
       }
 
-      final result = LoginResponse.fromJson(data);
+      final result =
+      LoginResponse.fromJson(data);
 
       await SessionStorage.saveAccessToken(
         result.accessToken,
@@ -72,17 +70,15 @@ class AuthService {
     }
   }
 
-  // ============================================================
-  // UTILISATEUR CONNECTÉ
-  // ============================================================
-
   Future<CurrentUser> me() async {
     try {
-      final response = await ApiClient.instance.get(
+      final response =
+      await ApiClient.instance.get(
         '/auth/me',
       );
 
-      final data = response.data as Map<String, dynamic>;
+      final data =
+      response.data as Map<String, dynamic>;
 
       if (data['success'] != true) {
         throw AuthException(
@@ -114,22 +110,15 @@ class AuthService {
     }
   }
 
-  // ============================================================
-  // LOGOUT
-  // ============================================================
-
   Future<void> logout() async {
     await SessionStorage.clear();
   }
-
-  // ============================================================
-  // SESSION
-  // ============================================================
 
   Future<bool> hasSession() async {
     final token =
     await SessionStorage.getAccessToken();
 
-    return token != null && token.isNotEmpty;
+    return token != null &&
+    token.isNotEmpty;
   }
 }

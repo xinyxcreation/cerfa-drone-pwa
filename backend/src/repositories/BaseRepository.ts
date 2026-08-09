@@ -6,13 +6,13 @@ import {
 
 import { v7 as uuidv7 } from 'uuid';
 
-import { getDatabase } from '../database/core/DatabaseConnection';
+import { getDatabase } from '../database/core/DatabaseConnection.js';
 
 export abstract class BaseRepository {
 
     protected readonly db: Pool;
 
-    protected constructor() {
+    public constructor() {
 
         this.db = getDatabase();
 
@@ -117,7 +117,7 @@ export abstract class BaseRepository {
         .map(column => `${column} = ?`)
         .join(', ');
 
-        await this.db.execute(
+        await this.db.query(
             `
             UPDATE ${table}
             SET

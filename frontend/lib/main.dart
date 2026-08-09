@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'core/theme/app_theme.dart';
+import 'features/auth/models/current_user.dart';
 import 'features/auth/presentation/login_page.dart';
 import 'features/auth/services/auth_service.dart';
 import 'features/home/presentation/home_page.dart';
+import 'core/navigation/app_shell.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +28,11 @@ class CerfaDroneApp extends StatefulWidget {
 class _CerfaDroneAppState
 extends State<CerfaDroneApp> {
 
+  final AuthService _authService =
+  const AuthService();
+
+  CurrentUser? _currentUser;
+
   bool _loggedIn = false;
   bool _checkingSession = true;
 
@@ -38,27 +45,83 @@ extends State<CerfaDroneApp> {
 
   Future<void> _checkSession() async {
     final authenticated =
-    await const AuthService()
-    .hasSession();
+    await _authService.hasSession();
 
-    if (!mounted) {
+    if (!authenticated) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _loggedIn = false;
+        _checkingSession = false;
+      });
+
       return;
     }
 
-    setState(() {
-      _loggedIn = authenticated;
-      _checkingSession = false;
-    });
+    try {
+      final user =
+      await _authService.me();
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _currentUser = user;
+        _loggedIn = true;
+        _checkingSession = false;
+      });
+    } catch (_) {
+      await _authService.logout();
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _currentUser = null;
+        _loggedIn = false;
+        _checkingSession = false;
+      });
+    }
   }
 
   void _onLoggedIn() {
-    setState(() {
-      _loggedIn = true;
-    });
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    try {
+      final user =
+      await _authService.me();
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _currentUser = user;
+        _loggedIn = true;
+      });
+    } catch (_) {
+      await _authService.logout();
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _currentUser = null;
+        _loggedIn = false;
+      });
+    }
   }
 
   void _onLogout() {
     setState(() {
+      _currentUser = null;
       _loggedIn = false;
     });
   }
@@ -72,26 +135,23 @@ extends State<CerfaDroneApp> {
 
       title: 'CERFA DRONE',
 
-      theme:
-      AppTheme.light(),
+      theme: AppTheme.light(),
 
       home: _checkingSession
       ? const _LoadingPage()
-      : _loggedIn
-      ? HomePage(
-        onLogout:
-        _onLogout,
+      : _loggedIn && _currentUser != null
+      ? AppShell(
+        user: _currentUser!,
+        onLogout: _onLogout,
       )
       : LoginPage(
-        onLoggedIn:
-        _onLoggedIn,
+        onLoggedIn: _onLoggedIn,
       ),
     );
   }
 }
 
-class _LoadingPage
-extends StatelessWidget {
+class _LoadingPage extends StatelessWidget {
   const _LoadingPage();
 
   @override
@@ -102,11 +162,8 @@ extends StatelessWidget {
       backgroundColor:
       Color(0xFFF5F5F5),
       body: Center(
-        child:
-        CircularProgressIndicator(
-          color: Color(
-            0xFFE30613,
-          ),
+        child: CircularProgressIndicator(
+          color: Color(0xFFE30613),
         ),
       ),
     );

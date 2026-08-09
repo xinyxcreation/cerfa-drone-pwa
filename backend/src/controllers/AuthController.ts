@@ -1,4 +1,7 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import {
+    FastifyReply,
+    FastifyRequest
+} from 'fastify';
 
 import { LoginSchema } from '../schemas/auth/LoginSchema.js';
 import { AuthService } from '../services/AuthService.js';
@@ -21,7 +24,8 @@ export class AuthController {
             body.password
         );
 
-        const accessToken = await request.server.jwt.sign({
+        const accessToken =
+        await request.server.jwt.sign({
 
             sub: auth.userId,
 
@@ -60,6 +64,58 @@ export class AuthController {
             },
 
             role: auth.roleCode
+
+        });
+
+    }
+
+    public async me(
+        request: FastifyRequest,
+        reply: FastifyReply
+    ): Promise<void> {
+
+        const payload =
+        await request.jwtVerify<{
+            sub: string;
+            company_id: string;
+            role: string;
+        }>();
+
+        const result =
+        await this.authService.getCurrentUser(
+            payload.sub,
+            payload.company_id
+        );
+
+        reply.send({
+
+            success: true,
+
+            user: {
+
+                id: result.userId,
+
+                first_name: result.firstName,
+
+                last_name: result.lastName,
+
+                email: result.email,
+
+                phone: result.phone,
+
+                is_active: result.isActive
+
+            },
+
+            company: {
+
+                id: result.companyId,
+
+                name: result.companyName
+
+            },
+
+            role: result.roleCode
 
         });
 

@@ -1,25 +1,35 @@
 import { RowDataPacket } from 'mysql2/promise';
 
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from './BaseRepository.js';
 
 export interface Company extends RowDataPacket {
 
     id: string;
 
     name: string;
+    legal_name: string | null;
+    contact_name: string | null;
+
     siret: string | null;
+    alphatango_operator_number: string;
 
     email: string | null;
     phone: string | null;
+    website_url: string | null;
 
     address_line_1: string | null;
     address_line_2: string | null;
 
     postal_code: string | null;
     city: string | null;
-    country: string | null;
+    country: string;
+
+    logo_path: string | null;
+    signature_path: string | null;
 
     is_active: boolean;
+
+    notes: string | null;
 
     created_at: Date;
     updated_at: Date;
@@ -47,14 +57,27 @@ export class CompanyRepository extends BaseRepository {
     public async create(
         company: {
             name: string;
+            legal_name?: string | null;
+            contact_name?: string | null;
+
             siret?: string | null;
+            alphatango_operator_number: string;
+
             email?: string | null;
             phone?: string | null;
+            website_url?: string | null;
+
             address_line_1?: string | null;
             address_line_2?: string | null;
+
             postal_code?: string | null;
             city?: string | null;
-            country?: string | null;
+            country?: string;
+
+            logo_path?: string | null;
+            signature_path?: string | null;
+
+            notes?: string | null;
         }
     ): Promise<string> {
 
@@ -62,15 +85,53 @@ export class CompanyRepository extends BaseRepository {
             this.table,
             {
                 name: company.name,
-                siret: company.siret ?? null,
-                email: company.email ?? null,
-                phone: company.phone ?? null,
-                address_line_1: company.address_line_1 ?? null,
-                address_line_2: company.address_line_2 ?? null,
-                postal_code: company.postal_code ?? null,
-                city: company.city ?? null,
-                country: company.country ?? 'France',
-                is_active: true
+
+                legal_name:
+                company.legal_name ?? null,
+
+                contact_name:
+                company.contact_name ?? null,
+
+                siret:
+                company.siret ?? null,
+
+                alphatango_operator_number:
+                company.alphatango_operator_number,
+
+                email:
+                company.email ?? null,
+
+                phone:
+                company.phone ?? null,
+
+                website_url:
+                company.website_url ?? null,
+
+                address_line_1:
+                company.address_line_1 ?? null,
+
+                address_line_2:
+                company.address_line_2 ?? null,
+
+                postal_code:
+                company.postal_code ?? null,
+
+                city:
+                company.city ?? null,
+
+                country:
+                company.country ?? 'France',
+
+                logo_path:
+                company.logo_path ?? null,
+
+                signature_path:
+                company.signature_path ?? null,
+
+                is_active: true,
+
+                notes:
+                company.notes ?? null
             }
         );
 

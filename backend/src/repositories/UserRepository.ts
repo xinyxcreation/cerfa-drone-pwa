@@ -1,6 +1,6 @@
 import { RowDataPacket } from 'mysql2/promise';
 
-import { BaseRepository } from './BaseRepository';
+import { BaseRepository } from './BaseRepository.js';
 
 export interface User extends RowDataPacket {
 
@@ -9,13 +9,14 @@ export interface User extends RowDataPacket {
     email: string;
     password_hash: string;
 
-    first_name: string;
-    last_name: string;
+    firstname: string;
+    lastname: string;
 
     phone: string | null;
 
     is_active: boolean;
 
+    email_verified_at: Date | null;
     last_company_id: string | null;
     last_login_at: Date | null;
 
@@ -58,8 +59,8 @@ export class UserRepository extends BaseRepository {
         user: {
             email: string;
             password_hash: string;
-            first_name: string;
-            last_name: string;
+            firstname: string;
+            lastname: string;
             phone?: string | null;
         }
     ): Promise<string> {
@@ -69,10 +70,15 @@ export class UserRepository extends BaseRepository {
             {
                 email: user.email,
                 password_hash: user.password_hash,
-                first_name: user.first_name,
-                last_name: user.last_name,
+
+                firstname: user.firstname,
+                lastname: user.lastname,
+
                 phone: user.phone ?? null,
+
                 is_active: true,
+
+                email_verified_at: null,
                 last_company_id: null,
                 last_login_at: null
             }

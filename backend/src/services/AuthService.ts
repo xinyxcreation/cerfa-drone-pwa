@@ -153,13 +153,134 @@ export class AuthService {
 
             roleCode: role.code,
 
-            firstName: user.first_name,
+            firstName: user.firstname,
 
-            lastName: user.last_name,
+            lastName: user.lastname,
 
             email: user.email,
 
             companyName: company.name
+
+        };
+
+    }
+
+    public async getCurrentUser(
+        userId: string,
+        companyId: string
+    ): Promise<{
+        userId: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string | null;
+        isActive: boolean;
+        companyId: string;
+        companyName: string;
+        roleCode: string;
+    }> {
+
+        const user =
+        await this.users.findById(
+            userId
+        );
+
+        if (!user) {
+
+            throw new AuthenticationError(
+                'Utilisateur introuvable.'
+            );
+
+        }
+
+        if (!user.is_active) {
+
+            throw new AuthorizationError(
+                'Utilisateur désactivé.'
+            );
+
+        }
+
+        const company =
+        await this.companies.findById(
+            companyId
+        );
+
+        if (!company) {
+
+            throw new NotFoundError(
+                'Entreprise introuvable.'
+            );
+
+        }
+
+        if (!company.is_active) {
+
+            throw new AuthorizationError(
+                'Entreprise désactivée.'
+            );
+
+        }
+
+        const companyUsers =
+        await this.companyUsers.findByUserId(
+            userId
+        );
+
+        const companyUser =
+        companyUsers.find(
+            item =>
+            item.company_id === companyId
+        );
+
+        if (!companyUser) {
+
+            throw new AuthorizationError(
+                'Utilisateur non associé à cette entreprise.'
+            );
+
+        }
+
+        const role =
+        await this.roles.findById(
+            companyUser.role_id
+        );
+
+        if (!role) {
+
+            throw new NotFoundError(
+                'Rôle introuvable.'
+            );
+
+        }
+
+        if (!role.is_active) {
+
+            throw new AuthorizationError(
+                'Rôle désactivé.'
+            );
+
+        }
+
+        return {
+
+            userId: user.id,
+
+            firstName: user.firstname,
+
+            lastName: user.lastname,
+
+            email: user.email,
+
+            phone: user.phone,
+
+            isActive: user.is_active,
+
+            companyId: company.id,
+
+            companyName: company.name,
+
+            roleCode: role.code
 
         };
 

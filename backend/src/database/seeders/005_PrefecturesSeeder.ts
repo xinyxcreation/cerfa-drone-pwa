@@ -2,8 +2,8 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { Pool } from 'mysql2/promise';
 
-import { BaseSeeder } from '../BaseSeeder';
-import { Seeder } from '../Seeder';
+import { BaseSeeder } from '../BaseSeeder.js';
+import { Seeder } from '../Seeder.js';
 
 interface PrefectureJson {
 

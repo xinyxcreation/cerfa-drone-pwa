@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
+import '../../auth/models/current_user.dart';
 import '../../auth/services/auth_service.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
     super.key,
+    required this.user,
     required this.onLogout,
+    this.showNavigation = true,
   });
 
+  final CurrentUser user;
   final VoidCallback onLogout;
+  final bool showNavigation;
 
   Future<void> _logout() async {
     await const AuthService().logout();
@@ -19,6 +24,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
+
+      // ============================================================
+      // HEADER
+      // ============================================================
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF111111),
@@ -49,6 +58,10 @@ class HomePage extends StatelessWidget {
           ],
       ),
 
+      // ============================================================
+      // CONTENU
+      // ============================================================
+
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
@@ -58,12 +71,27 @@ class HomePage extends StatelessWidget {
             120,
           ),
           children: [
+            // --------------------------------------------------------
+            // UTILISATEUR / ENTREPRISE
+            // --------------------------------------------------------
+
             const Text(
-              'Bonjour Romain 👋',
+              'Bonjour 👋',
               style: TextStyle(
                 fontSize: 27,
                 fontWeight: FontWeight.w800,
                 color: Color(0xFF222222),
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            Text(
+              user.companyName,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w600,
               ),
             ),
 
@@ -79,11 +107,19 @@ class HomePage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
+            // --------------------------------------------------------
+            // ALERTES
+            // --------------------------------------------------------
+
             _AlertCard(
               onTap: () {},
             ),
 
             const SizedBox(height: 24),
+
+            // --------------------------------------------------------
+            // MISSIONS DU JOUR
+            // --------------------------------------------------------
 
             const _SectionTitle(
               title: 'MISSIONS DU JOUR',
@@ -113,6 +149,10 @@ class HomePage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
+            // --------------------------------------------------------
+            // RÉPONSES PRÉFECTURE
+            // --------------------------------------------------------
+
             const _SectionTitle(
               title: 'RÉPONSES PRÉFECTURE',
             ),
@@ -127,6 +167,10 @@ class HomePage extends StatelessWidget {
             ),
 
             const SizedBox(height: 24),
+
+            // --------------------------------------------------------
+            // DOCUMENTS
+            // --------------------------------------------------------
 
             const _SectionTitle(
               title: 'DOCUMENTS',
@@ -144,16 +188,23 @@ class HomePage extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: const _BottomNavigation(),
+      // ============================================================
+      // NAVIGATION BASSE
+      // ============================================================
+
+      bottomNavigationBar: showNavigation
+      ? const _BottomNavigation()
+      : null,
     );
   }
 }
 
+// ==================================================================
+// NAVIGATION BASSE
+// ==================================================================
+
 class _BottomNavigation extends StatelessWidget {
   const _BottomNavigation();
-
-  static const Color red = Color(0xFFE30613);
-  static const Color dark = Color(0xFF333333);
 
   @override
   Widget build(BuildContext context) {
@@ -233,6 +284,10 @@ class _BottomNavigation extends StatelessWidget {
   }
 }
 
+// ==================================================================
+// ITEM NAVIGATION
+// ==================================================================
+
 class _NavigationItem extends StatelessWidget {
   const _NavigationItem({
     required this.icon,
@@ -299,6 +354,10 @@ class _NavigationItem extends StatelessWidget {
   }
 }
 
+// ==================================================================
+// BOUTON NOUVELLE MISSION
+// ==================================================================
+
 class _NewMissionButton extends StatelessWidget {
   const _NewMissionButton({
     required this.onTap,
@@ -345,6 +404,10 @@ class _NewMissionButton extends StatelessWidget {
   }
 }
 
+// ==================================================================
+// TITRE DE SECTION
+// ==================================================================
+
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle({
     required this.title,
@@ -365,6 +428,10 @@ class _SectionTitle extends StatelessWidget {
     );
   }
 }
+
+// ==================================================================
+// CARTE ALERTES
+// ==================================================================
 
 class _AlertCard extends StatelessWidget {
   const _AlertCard({
@@ -413,7 +480,9 @@ class _AlertCard extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
+
                     SizedBox(height: 3),
+
                     Text(
                       'nécessitent votre attention',
                       style: TextStyle(
@@ -436,6 +505,10 @@ class _AlertCard extends StatelessWidget {
     );
   }
 }
+
+// ==================================================================
+// CARTE MISSION
+// ==================================================================
 
 class _MissionCard extends StatelessWidget {
   const _MissionCard({
@@ -489,7 +562,9 @@ class _MissionCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+
                   const SizedBox(height: 3),
+
                   Text(
                     location,
                     style: TextStyle(
@@ -504,15 +579,13 @@ class _MissionCard extends StatelessWidget {
             const SizedBox(width: 8),
 
             Container(
-              padding:
-              const EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 9,
                 vertical: 5,
               ),
               decoration: BoxDecoration(
                 color: statusBackground,
-                borderRadius:
-                BorderRadius.circular(7),
+                borderRadius: BorderRadius.circular(7),
               ),
               child: Text(
                 status,
@@ -530,8 +603,11 @@ class _MissionCard extends StatelessWidget {
   }
 }
 
-class _DashboardActionCard
-extends StatelessWidget {
+// ==================================================================
+// CARTE ACTION DASHBOARD
+// ==================================================================
+
+class _DashboardActionCard extends StatelessWidget {
   const _DashboardActionCard({
     required this.icon,
     required this.title,
@@ -561,8 +637,7 @@ extends StatelessWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFE5E5),
-                  borderRadius:
-                  BorderRadius.circular(11),
+                  borderRadius: BorderRadius.circular(11),
                 ),
                 child: Icon(
                   icon,
@@ -584,7 +659,9 @@ extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+
                     const SizedBox(height: 3),
+
                     Text(
                       subtitle,
                       style: TextStyle(

@@ -1,9 +1,9 @@
 import argon2 from 'argon2';
 
-import { UserRepository } from '../repositories/UserRepository';
-import { CompanyRepository } from '../repositories/CompanyRepository';
-import { CompanyUserRepository } from '../repositories/CompanyUserRepository';
-import { RoleRepository } from '../repositories/RoleRepository';
+import { UserRepository } from '../repositories/UserRepository.js';
+import { CompanyRepository } from '../repositories/CompanyRepository.js';
+import { CompanyUserRepository } from '../repositories/CompanyUserRepository.js';
+import { RoleRepository } from '../repositories/RoleRepository.js';
 
 export interface LoginResult {
 

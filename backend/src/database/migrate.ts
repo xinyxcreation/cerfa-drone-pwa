@@ -1,4 +1,4 @@
-import { MigrationRunner } from './MigrationRunner';
+import { MigrationRunner } from './MigrationRunner.js';
 import { getDatabase, closeDatabase } from './core/DatabaseConnection.js';
 
 async function main() {

@@ -1,4 +1,4 @@
-import { SeederRunner } from './SeederRunner';
+import { SeederRunner } from './SeederRunner.js';
 
 async function main(): Promise<void> {
 

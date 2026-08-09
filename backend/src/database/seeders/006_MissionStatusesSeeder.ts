@@ -1,7 +1,7 @@
 import { Pool } from 'mysql2/promise';
 
-import { BaseSeeder } from '../BaseSeeder';
-import { Seeder } from '../Seeder';
+import { BaseSeeder } from '../BaseSeeder.js';
+import { Seeder } from '../Seeder.js';
 
 export class MissionStatusesSeeder extends BaseSeeder implements Seeder {
 

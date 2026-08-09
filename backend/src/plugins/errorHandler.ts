@@ -1,6 +1,6 @@
 import fp from 'fastify-plugin';
 
-import { ApiError } from '../errors/ApiError';
+import { ApiError } from '../errors/ApiError.js';
 
 export default fp(async (app) => {
 

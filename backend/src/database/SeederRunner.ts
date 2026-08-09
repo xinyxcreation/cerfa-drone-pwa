@@ -1,5 +1,5 @@
-import { getDatabase } from './core/DatabaseConnection';
-import { seeders } from './seeders';
+import { getDatabase } from './core/DatabaseConnection.js';
+import { seeders } from './seeders/index.js';
 
 export class SeederRunner {
 

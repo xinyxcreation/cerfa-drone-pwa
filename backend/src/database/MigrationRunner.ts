@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { getDatabase } from './core//DatabaseConnection';
-import { SqlScriptRunner } from './core//SqlScriptRunner';
-import { DatabaseChecker } from './core//DatabaseChecker';
+import { getDatabase } from './core/DatabaseConnection.js';
+import { SqlScriptRunner } from './core/SqlScriptRunner.js';
+import { DatabaseChecker } from './core/DatabaseChecker.js';
 
 export class MigrationRunner extends SqlScriptRunner {
 
