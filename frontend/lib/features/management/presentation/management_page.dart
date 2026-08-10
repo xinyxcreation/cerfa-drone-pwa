@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../auth/models/current_user.dart';
 import '../models/company_pilot.dart';
 import '../services/pilots_service.dart';
+import '../models/company.dart';
+import '../services/company_service.dart';
 
 class ManagementPage extends StatelessWidget {
   const ManagementPage({
@@ -14,6 +16,10 @@ class ManagementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final role = user.role.toUpperCase();
+    final canManageCompany =
+    role == 'OWNER' || role == 'MANAGER';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
 
@@ -39,100 +45,101 @@ class ManagementPage extends StatelessWidget {
           30,
         ),
         children: [
-          _ManagementCard(
-            icon: Icons.business_outlined,
-            title: 'Entreprise',
-            subtitle: user.companyName,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => CompanyPage(
-                    user: user,
+          if (canManageCompany)
+            _ManagementCard(
+              icon: Icons.business_outlined,
+              title: 'Entreprise',
+              subtitle: user.companyName,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => CompanyPage(
+                      user: user,
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+            ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          _ManagementCard(
-            icon: Icons.person_outline,
-            title: 'Pilotes',
-            subtitle:
-            'Gérer les pilotes de l’entreprise',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const PilotsPage(),
-                ),
-              );
-            },
-          ),
+            if (canManageCompany)
+              _ManagementCard(
+                icon: Icons.person_outline,
+                title: 'Pilotes',
+                subtitle: 'Gérer les pilotes de l’entreprise',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const PilotsPage(),
+                    ),
+                  );
+                },
+              ),
 
-          const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-          _ManagementCard(
-            icon: Icons.flight_outlined,
-            title: 'Drones',
-            subtitle:
-            'Gérer les drones de l’entreprise',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const DronesPage(),
-                ),
-              );
-            },
-          ),
+              _ManagementCard(
+                icon: Icons.flight_outlined,
+                title: 'Drones',
+                subtitle:
+                'Gérer les drones de l’entreprise',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const DronesPage(),
+                    ),
+                  );
+                },
+              ),
 
-          const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-          _ManagementCard(
-            icon: Icons.location_on_outlined,
-            title: 'Sites',
-            subtitle:
-            'Gérer les sites d’intervention',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SitesPage(),
-                ),
-              );
-            },
-          ),
+              _ManagementCard(
+                icon: Icons.location_on_outlined,
+                title: 'Sites',
+                subtitle:
+                'Gérer les sites d’intervention',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const SitesPage(),
+                    ),
+                  );
+                },
+              ),
 
-          const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-          _ManagementCard(
-            icon: Icons.folder_outlined,
-            title: 'Documents',
-            subtitle:
-            'Documents et justificatifs',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const DocumentsPage(),
-                ),
-              );
-            },
-          ),
+              _ManagementCard(
+                icon: Icons.folder_outlined,
+                title: 'Documents',
+                subtitle:
+                'Documents et justificatifs',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const DocumentsPage(),
+                    ),
+                  );
+                },
+              ),
 
-          const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-          _ManagementCard(
-            icon: Icons.settings_outlined,
-            title: 'Paramètres',
-            subtitle:
-            'Configuration de CERFA DRONE',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SettingsPage(),
-                ),
-              );
-            },
-          ),
+              _ManagementCard(
+                icon: Icons.settings_outlined,
+                title: 'Paramètres',
+                subtitle:
+                'Configuration de CERFA DRONE',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const SettingsPage(),
+                    ),
+                  );
+                },
+              ),
         ],
       ),
     );
@@ -173,8 +180,7 @@ class _ManagementCard extends StatelessWidget {
                 height: 48,
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFE4E4),
-                  borderRadius:
-                  BorderRadius.circular(13),
+                  borderRadius: BorderRadius.circular(13),
                 ),
                 child: Icon(
                   icon,
@@ -182,13 +188,10 @@ class _ManagementCard extends StatelessWidget {
                   size: 25,
                 ),
               ),
-
               const SizedBox(width: 14),
-
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
@@ -198,9 +201,7 @@ class _ManagementCard extends StatelessWidget {
                         color: Color(0xFF222222),
                       ),
                     ),
-
                     const SizedBox(height: 4),
-
                     Text(
                       subtitle,
                       style: TextStyle(
@@ -211,7 +212,6 @@ class _ManagementCard extends StatelessWidget {
                   ],
                 ),
               ),
-
               const Icon(
                 Icons.chevron_right,
                 color: Color(0xFF777777),
@@ -228,7 +228,7 @@ class _ManagementCard extends StatelessWidget {
 // ENTREPRISE
 // ==================================================================
 
-class CompanyPage extends StatelessWidget {
+class CompanyPage extends StatefulWidget {
   const CompanyPage({
     super.key,
     required this.user,
@@ -237,21 +237,1167 @@ class CompanyPage extends StatelessWidget {
   final CurrentUser user;
 
   @override
+  State<CompanyPage> createState() =>
+  _CompanyPageState();
+}
+
+class _CompanyPageState extends State<CompanyPage> {
+  late Future<Company> _companyFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCompany();
+  }
+
+  void _loadCompany() {
+    _companyFuture =
+    CompanyService.getCompany();
+  }
+
+  Future<void> _refresh() async {
+    setState(_loadCompany);
+
+    try {
+      await _companyFuture;
+    } catch (_) {}
+  }
+
+  Future<void> _editCompany(
+    Company company,
+  ) async {
+    final updated =
+    await Navigator.of(context).push<Company>(
+      MaterialPageRoute(
+        builder: (_) => EditCompanyPage(
+          company: company,
+        ),
+      ),
+    );
+
+    if (updated != null && mounted) {
+      setState(() {
+        _companyFuture =
+        Future.value(updated);
+      });
+    }
+  }
+
+  String _roleLabel(String role) {
+    switch (role.toUpperCase()) {
+      case 'OWNER':
+        return 'Propriétaire';
+
+      case 'MANAGER':
+        return 'Gestionnaire';
+
+      case 'PILOT':
+        return 'Pilote';
+
+      default:
+        return role;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final role = widget.user.role.toUpperCase();
+    final canEdit =
+    role == 'OWNER' || role == 'MANAGER';
+
     return _ManagementSubPage(
       title: 'Entreprise',
       icon: Icons.business_outlined,
-      children: [
-        _InfoCard(
-          title: 'Entreprise active',
-          value: user.companyName,
+      actions: [
+        IconButton(
+          tooltip: 'Actualiser',
+          onPressed: _refresh,
+          icon: const Icon(
+            Icons.refresh,
+          ),
         ),
+      ],
+      children: [
+        FutureBuilder<Company>(
+          future: _companyFuture,
+          builder: (
+            context,
+            snapshot,
+          ) {
+            if (snapshot.connectionState ==
+              ConnectionState.waiting) {
+              return const _CompanyLoadingState();
+              }
 
-        const SizedBox(height: 12),
+              if (snapshot.hasError) {
+                return _CompanyErrorState(
+                  message: snapshot.error
+                  ?.toString()
+                  .replaceFirst(
+                    'Exception: ',
+                    '',
+                  ) ??
+                  'Impossible de charger l’entreprise.',
+                  onRetry: () {
+                    setState(_loadCompany);
+                  },
+                );
+              }
 
-        _InfoCard(
-          title: 'Rôle',
-          value: user.role,
+              final company = snapshot.data;
+
+              if (company == null) {
+                return _CompanyErrorState(
+                  message:
+                  'Aucune entreprise disponible.',
+                  onRetry: () {
+                    setState(_loadCompany);
+                  },
+                );
+              }
+
+              return Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.stretch,
+                children: [
+                  _CompanyHeaderCard(
+                    company: company,
+                    role: _roleLabel(
+                      widget.user.role,
+                    ),
+                    canEdit: canEdit,
+                    onEdit: () =>
+                    _editCompany(company),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _CompanySection(
+                    title: 'Identité',
+                    icon:
+                    Icons.business_outlined,
+                    children: [
+                      _CompanyInfoRow(
+                        label: 'Nom de l’entreprise',
+                        value: company.name,
+                      ),
+                      _CompanyInfoRow(
+                        label: 'Raison sociale',
+                        value: company.legalName,
+                      ),
+                      _CompanyInfoRow(
+                        label: 'Nom du contact',
+                        value: company.contactName,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _CompanySection(
+                    title: 'Informations administratives',
+                    icon: Icons.badge_outlined,
+                    children: [
+                      _CompanyInfoRow(
+                        label: 'SIRET',
+                        value: company.siret,
+                      ),
+                      _CompanyInfoRow(
+                        label:
+                        'N° exploitant AlphaTango',
+                        value:
+                        company.alphatangoOperatorNumber,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _CompanySection(
+                    title: 'Coordonnées',
+                    icon: Icons.contact_phone_outlined,
+                    children: [
+                      _CompanyInfoRow(
+                        label: 'E-mail',
+                        value: company.email,
+                      ),
+                      _CompanyInfoRow(
+                        label: 'Téléphone',
+                        value: company.phone,
+                      ),
+                      _CompanyInfoRow(
+                        label: 'Site internet',
+                        value: company.websiteUrl,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _CompanySection(
+                    title: 'Adresse',
+                    icon: Icons.location_on_outlined,
+                    children: [
+                      _CompanyInfoRow(
+                        label: 'Adresse',
+                        value: company.addressLine1,
+                      ),
+                      _CompanyInfoRow(
+                        label: 'Complément',
+                        value: company.addressLine2,
+                      ),
+                      _CompanyInfoRow(
+                        label: 'Code postal',
+                        value: company.postalCode,
+                      ),
+                      _CompanyInfoRow(
+                        label: 'Ville',
+                        value: company.city,
+                      ),
+                      _CompanyInfoRow(
+                        label: 'Pays',
+                        value: company.country,
+                      ),
+                    ],
+                  ),
+
+                  if (company.notes != null &&
+                    company.notes!
+                    .trim()
+                    .isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      _CompanySection(
+                        title: 'Notes',
+                        icon: Icons.notes_outlined,
+                        children: [
+                          _CompanyInfoRow(
+                            label: 'Notes',
+                            value: company.notes,
+                          ),
+                        ],
+                      ),
+                    ],
+                ],
+              );
+          },
+        ),
+      ],
+    );
+  }
+}
+// ==================================================================
+// EN-TÊTE ENTREPRISE
+// ==================================================================
+
+class _CompanyHeaderCard extends StatelessWidget {
+  const _CompanyHeaderCard({
+    required this.company,
+    required this.role,
+    required this.canEdit,
+    required this.onEdit,
+  });
+
+  final Company company;
+  final String role;
+  final bool canEdit;
+  final VoidCallback onEdit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius:
+        BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color:
+              const Color(0xFFFFE4E4),
+              borderRadius:
+              BorderRadius.circular(22),
+            ),
+            child: const Icon(
+              Icons.business_outlined,
+              color: Color(0xFFE30613),
+              size: 38,
+            ),
+          ),
+
+          const SizedBox(height: 14),
+
+          Text(
+            company.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF222222),
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          Container(
+            padding:
+            const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 6,
+            ),
+            decoration: BoxDecoration(
+              color:
+              const Color(0xFFFFE4E4),
+              borderRadius:
+              BorderRadius.circular(20),
+            ),
+            child: Text(
+              role,
+              style: const TextStyle(
+                color: Color(0xFFE30613),
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+
+          if (canEdit) ...[
+            const SizedBox(height: 18),
+
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: onEdit,
+                style:
+                FilledButton.styleFrom(
+                  backgroundColor:
+                  const Color(0xFFE30613),
+                  foregroundColor:
+                    Colors.white,
+                    padding:
+                    const EdgeInsets.symmetric(
+                      vertical: 13,
+                    ),
+                    shape:
+                    RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(12),
+                    ),
+                ),
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  size: 19,
+                ),
+                label: const Text(
+                  'Modifier l’entreprise',
+                  style: TextStyle(
+                    fontWeight:
+                    FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ==================================================================
+// SECTION ENTREPRISE
+// ==================================================================
+
+class _CompanySection extends StatelessWidget {
+  const _CompanySection({
+    required this.title,
+    required this.icon,
+    required this.children,
+  });
+
+  final String title;
+  final IconData icon;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius:
+        BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color:
+                const Color(0xFFE30613),
+                size: 21,
+              ),
+
+              const SizedBox(width: 9),
+
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight:
+                  FontWeight.w800,
+                  color:
+                  Color(0xFF222222),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 14),
+
+          ...children,
+        ],
+      ),
+    );
+  }
+}
+
+// ==================================================================
+// INFORMATION ENTREPRISE
+// ==================================================================
+
+class _CompanyInfoRow extends StatelessWidget {
+  const _CompanyInfoRow({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String? value;
+
+  @override
+  Widget build(BuildContext context) {
+    final displayValue =
+    value == null ||
+    value!.trim().isEmpty
+    ? 'Non renseigné'
+    : value!.trim();
+
+    final empty =
+    value == null ||
+    value!.trim().isEmpty;
+
+    return Padding(
+      padding:
+      const EdgeInsets.only(bottom: 13),
+      child: Column(
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color:
+              Colors.grey.shade600,
+              fontWeight:
+              FontWeight.w600,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            displayValue,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight:
+              FontWeight.w700,
+              color: empty
+              ? Colors.grey.shade400
+              : const Color(0xFF222222),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==================================================================
+// CHARGEMENT ENTREPRISE
+// ==================================================================
+
+class _CompanyLoadingState
+extends StatelessWidget {
+  const _CompanyLoadingState();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(40),
+      child: Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFFE30613),
+        ),
+      ),
+    );
+  }
+}
+
+// ==================================================================
+// ERREUR ENTREPRISE
+// ==================================================================
+
+class _CompanyErrorState
+extends StatelessWidget {
+  const _CompanyErrorState({
+    required this.message,
+    required this.onRetry,
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+      const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius:
+        BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.error_outline,
+            color: Color(0xFFE30613),
+            size: 46,
+          ),
+
+          const SizedBox(height: 14),
+
+          const Text(
+            'Impossible de charger l’entreprise',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight:
+              FontWeight.w800,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              color:
+              Colors.grey.shade600,
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          OutlinedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(
+              Icons.refresh,
+            ),
+            label: const Text(
+              'Réessayer',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+// ==================================================================
+// MODIFICATION ENTREPRISE
+// ==================================================================
+
+class EditCompanyPage extends StatefulWidget {
+  const EditCompanyPage({
+    super.key,
+    required this.company,
+  });
+
+  final Company company;
+
+  @override
+  State<EditCompanyPage> createState() =>
+  _EditCompanyPageState();
+}
+
+class _EditCompanyPageState
+extends State<EditCompanyPage> {
+  final _formKey =
+  GlobalKey<FormState>();
+
+  late final TextEditingController
+  _nameController;
+
+  late final TextEditingController
+  _legalNameController;
+
+  late final TextEditingController
+  _contactNameController;
+
+  late final TextEditingController
+  _siretController;
+
+  late final TextEditingController
+  _alphaTangoController;
+
+  late final TextEditingController
+  _emailController;
+
+  late final TextEditingController
+  _phoneController;
+
+  late final TextEditingController
+  _websiteController;
+
+  late final TextEditingController
+  _address1Controller;
+
+  late final TextEditingController
+  _address2Controller;
+
+  late final TextEditingController
+  _postalCodeController;
+
+  late final TextEditingController
+  _cityController;
+
+  late final TextEditingController
+  _countryController;
+
+  late final TextEditingController
+  _notesController;
+
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final company = widget.company;
+
+    _nameController =
+    TextEditingController(
+      text: company.name,
+    );
+
+    _legalNameController =
+    TextEditingController(
+      text: company.legalName ?? '',
+    );
+
+    _contactNameController =
+    TextEditingController(
+      text: company.contactName ?? '',
+    );
+
+    _siretController =
+    TextEditingController(
+      text: company.siret ?? '',
+    );
+
+    _alphaTangoController =
+    TextEditingController(
+      text:
+      company.alphatangoOperatorNumber,
+    );
+
+    _emailController =
+    TextEditingController(
+      text: company.email ?? '',
+    );
+
+    _phoneController =
+    TextEditingController(
+      text: company.phone ?? '',
+    );
+
+    _websiteController =
+    TextEditingController(
+      text: company.websiteUrl ?? '',
+    );
+
+    _address1Controller =
+    TextEditingController(
+      text: company.addressLine1 ?? '',
+    );
+
+    _address2Controller =
+    TextEditingController(
+      text: company.addressLine2 ?? '',
+    );
+
+    _postalCodeController =
+    TextEditingController(
+      text: company.postalCode ?? '',
+    );
+
+    _cityController =
+    TextEditingController(
+      text: company.city ?? '',
+    );
+
+    _countryController =
+    TextEditingController(
+      text: company.country,
+    );
+
+    _notesController =
+    TextEditingController(
+      text: company.notes ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _legalNameController.dispose();
+    _contactNameController.dispose();
+    _siretController.dispose();
+    _alphaTangoController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _websiteController.dispose();
+    _address1Controller.dispose();
+    _address2Controller.dispose();
+    _postalCodeController.dispose();
+    _cityController.dispose();
+    _countryController.dispose();
+    _notesController.dispose();
+
+    super.dispose();
+  }
+
+  String? _nullable(
+    TextEditingController controller,
+  ) {
+    final value =
+    controller.text.trim();
+
+    return value.isEmpty ? null : value;
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!
+      .validate()) {
+      return;
+      }
+
+      setState(() {
+        _loading = true;
+      });
+
+    final updated = Company(
+      id: widget.company.id,
+      name: _nameController.text.trim(),
+      legalName:
+      _nullable(_legalNameController),
+      contactName:
+      _nullable(_contactNameController),
+      siret: _nullable(_siretController),
+      alphatangoOperatorNumber:
+      _alphaTangoController.text.trim(),
+      email: _nullable(_emailController),
+      phone: _nullable(_phoneController),
+      websiteUrl:
+      _nullable(_websiteController),
+      addressLine1:
+      _nullable(_address1Controller),
+      addressLine2:
+      _nullable(_address2Controller),
+      postalCode:
+      _nullable(_postalCodeController),
+      city: _nullable(_cityController),
+      country:
+      _countryController.text.trim(),
+      logoPath: widget.company.logoPath,
+      signaturePath:
+      widget.company.signaturePath,
+      isActive: widget.company.isActive,
+      notes: _nullable(_notesController),
+      createdAt: widget.company.createdAt,
+      updatedAt: widget.company.updatedAt,
+    );
+
+    try {
+      final result =
+      await CompanyService.updateCompany(
+        updated,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+      .showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Entreprise enregistrée.',
+          ),
+          behavior:
+          SnackBarBehavior.floating,
+        ),
+      );
+
+      Navigator.of(context).pop(result);
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+      .showSnackBar(
+        SnackBar(
+          content: Text(
+            error
+            .toString()
+            .replaceFirst(
+              'Exception: ',
+              '',
+            ),
+          ),
+          backgroundColor:
+          const Color(0xFFB91C1C),
+          behavior:
+          SnackBarBehavior.floating,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _ManagementSubPage(
+      title: 'Modifier l’entreprise',
+      icon: Icons.business_outlined,
+      children: [
+        Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _FormField(
+                controller: _nameController,
+                label:
+                'Nom de l’entreprise',
+                icon:
+                Icons.business_outlined,
+                enabled: !_loading,
+                validator: (value) {
+                  if (value == null ||
+                    value.trim().isEmpty) {
+                    return
+                    'Le nom de l’entreprise est obligatoire.';
+                    }
+
+                    return null;
+                },
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller:
+                _legalNameController,
+                label: 'Raison sociale',
+                icon: Icons.badge_outlined,
+                enabled: !_loading,
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller:
+                _contactNameController,
+                label: 'Nom du contact',
+                icon:
+                Icons.person_outline,
+                enabled: !_loading,
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller: _siretController,
+                label: 'SIRET',
+                icon: Icons.numbers_outlined,
+                keyboardType:
+                TextInputType.number,
+                enabled: !_loading,
+                validator: (value) {
+                  final siret =
+                  value?.trim() ?? '';
+
+              if (siret.isEmpty) {
+                return null;
+              }
+
+              if (!RegExp(
+                r'^\d{14}$',
+              ).hasMatch(siret)) {
+                return
+                'Le SIRET doit contenir exactement 14 chiffres.';
+              }
+
+              return null;
+                },
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller:
+                _alphaTangoController,
+                label:
+                'N° exploitant AlphaTango',
+                icon:
+                Icons.flight_takeoff_outlined,
+                enabled: !_loading,
+                validator: (value) {
+                  if (value == null ||
+                    value.trim().isEmpty) {
+                    return
+                    'Le numéro AlphaTango est obligatoire.';
+                    }
+
+                    return null;
+                },
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller: _emailController,
+                label: 'E-mail',
+                icon:
+                Icons.email_outlined,
+                keyboardType:
+                TextInputType.emailAddress,
+                enabled: !_loading,
+                validator: (value) {
+                  final email =
+                  value?.trim() ?? '';
+
+              if (email.isEmpty) {
+                return null;
+              }
+
+              if (!RegExp(
+                r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+              ).hasMatch(email)) {
+                return
+                'Adresse e-mail invalide.';
+              }
+
+              return null;
+                },
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller: _phoneController,
+                label: 'Téléphone',
+                icon:
+                Icons.phone_outlined,
+                keyboardType:
+                TextInputType.phone,
+                enabled: !_loading,
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller:
+                _websiteController,
+                label: 'Site internet',
+                icon:
+                Icons.language_outlined,
+                keyboardType:
+                TextInputType.url,
+                enabled: !_loading,
+              ),
+
+              const SizedBox(height: 20),
+
+              const Align(
+                alignment:
+                Alignment.centerLeft,
+                child: Text(
+                  'Adresse',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight:
+                    FontWeight.w800,
+                    color:
+                    Color(0xFF222222),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller:
+                _address1Controller,
+                label: 'Adresse',
+                icon:
+                Icons.location_on_outlined,
+                enabled: !_loading,
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller:
+                _address2Controller,
+                label: 'Complément d’adresse',
+                icon:
+                Icons.home_outlined,
+                enabled: !_loading,
+              ),
+
+              const SizedBox(height: 12),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: _FormField(
+                      controller:
+                      _postalCodeController,
+                      label: 'Code postal',
+                      icon:
+                      Icons.markunread_mailbox_outlined,
+                      keyboardType:
+                      TextInputType.number,
+                      enabled: !_loading,
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  Expanded(
+                    child: _FormField(
+                      controller:
+                      _cityController,
+                      label: 'Ville',
+                      icon:
+                      Icons.location_city_outlined,
+                      enabled: !_loading,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              _FormField(
+                controller:
+                _countryController,
+                label: 'Pays',
+                icon:
+                Icons.public_outlined,
+                enabled: !_loading,
+                validator: (value) {
+                  if (value == null ||
+                    value.trim().isEmpty) {
+                    return
+                    'Le pays est obligatoire.';
+                    }
+
+                    return null;
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller:
+                _notesController,
+                enabled: !_loading,
+                maxLines: 5,
+                decoration:
+                _inputDecoration(
+                  label: 'Notes',
+                  icon:
+                  Icons.notes_outlined,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed:
+                  _loading ? null : _save,
+                  style:
+                  FilledButton.styleFrom(
+                    backgroundColor:
+                    const Color(0xFFE30613),
+                    foregroundColor:
+                      Colors.white,
+                      padding:
+                      const EdgeInsets.symmetric(
+                        vertical: 15,
+                      ),
+                      shape:
+                      RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(
+                          13,
+                        ),
+                      ),
+                  ),
+                  child: _loading
+                  ? const SizedBox(
+                    width: 21,
+                    height: 21,
+                    child:
+                    CircularProgressIndicator(
+                      strokeWidth: 2.2,
+                      color:
+                      Colors.white,
+                    ),
+                  )
+                  : const Text(
+                    'Enregistrer',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight:
+                      FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

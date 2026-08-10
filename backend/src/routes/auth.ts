@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 
 import { AuthController } from '../controllers/AuthController.js';
 import { CompanyPilotController } from '../controllers/CompanyPilotController.js';
+import { CompanyController } from '../controllers/CompanyController.js';
 
 export default async function authRoutes(
     app: FastifyInstance
@@ -12,6 +13,9 @@ export default async function authRoutes(
 
     const pilotController =
     new CompanyPilotController();
+
+    const companyController =
+    new CompanyController();
 
     app.post(
         '/login',
@@ -28,6 +32,36 @@ export default async function authRoutes(
             }
         },
         controller.me.bind(controller)
+    );
+    app.put(
+        '/me',
+        {
+            preHandler: async request => {
+
+                await request.jwtVerify();
+
+            }
+        },
+        controller.updateMe.bind(controller)
+    );
+    app.get(
+        '/company',
+        {
+            preHandler: async request => {
+                await request.jwtVerify();
+            }
+        },
+        companyController.get.bind(companyController)
+    );
+
+    app.put(
+        '/company',
+        {
+            preHandler: async request => {
+                await request.jwtVerify();
+            }
+        },
+        companyController.update.bind(companyController)
     );
 
     app.get(

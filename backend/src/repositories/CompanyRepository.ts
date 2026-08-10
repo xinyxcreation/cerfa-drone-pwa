@@ -136,6 +136,79 @@ export class CompanyRepository extends BaseRepository {
         );
 
     }
+    public async update(
+        id: string,
+        company: {
+            name: string;
+            legal_name: string | null;
+            contact_name: string | null;
+
+            siret: string | null;
+            alphatango_operator_number: string;
+
+            email: string | null;
+            phone: string | null;
+            website_url: string | null;
+
+            address_line_1: string | null;
+            address_line_2: string | null;
+
+            postal_code: string | null;
+            city: string | null;
+            country: string;
+
+            notes: string | null;
+        }
+    ): Promise<void> {
+
+        await this.baseUpdate(
+            this.table,
+            id,
+            {
+                name: company.name,
+
+                legal_name:
+                company.legal_name,
+
+                contact_name:
+                company.contact_name,
+
+                siret:
+                company.siret,
+
+                alphatango_operator_number:
+                company.alphatango_operator_number,
+
+                email:
+                company.email,
+
+                phone:
+                company.phone,
+
+                website_url:
+                company.website_url,
+
+                address_line_1:
+                company.address_line_1,
+
+                address_line_2:
+                company.address_line_2,
+
+                postal_code:
+                company.postal_code,
+
+                city:
+                company.city,
+
+                country:
+                company.country,
+
+                notes:
+                company.notes
+            }
+        );
+
+    }
 
     public async deactivate(
         id: string

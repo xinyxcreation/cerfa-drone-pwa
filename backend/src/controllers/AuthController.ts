@@ -5,6 +5,7 @@ import {
 
 import { LoginSchema } from '../schemas/auth/LoginSchema.js';
 import { AuthService } from '../services/AuthService.js';
+import { UpdateProfileSchema } from '../schemas/auth/UpdateProfileSchema.js';
 
 export class AuthController {
 
@@ -120,5 +121,66 @@ export class AuthController {
         });
 
     }
+    public async updateMe(
+        request: FastifyRequest,
+        reply: FastifyReply
+    ): Promise<void> {
 
+        const payload =
+        await request.jwtVerify<{
+            sub: string;
+            company_id: string;
+            role: string;
+        }>();
+
+        const body =
+        UpdateProfileSchema.parse(
+            request.body
+        );
+
+        await this.authService.updateProfile(
+            payload.sub,
+            {
+                first_name: body.first_name,
+                last_name: body.last_name,
+                email: body.email,
+                phone: body.phone ?? null
+            }
+        );
+
+        const result =
+        await this.authService.getCurrentUser(
+            payload.sub,
+            payload.company_id
+        );
+
+        reply.send({
+
+            success: true,
+
+            user: {
+
+                id:
+                result.userId,
+
+                first_name:
+                result.firstName,
+
+                last_name:
+                result.lastName,
+
+                email:
+                result.email,
+
+                phone:
+                result.phone,
+
+                is_active:
+                result.isActive
+
+            }
+
+        });
+
+    }
 }

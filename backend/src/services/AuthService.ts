@@ -2,6 +2,7 @@ import argon2 from 'argon2';
 
 import { AuthenticationError } from '../errors/AuthenticationError.js';
 import { AuthorizationError } from '../errors/AuthorizationError.js';
+import { ConflictError } from '../errors/ConflictError.js';
 import { NotFoundError } from '../errors/NotFoundError.js';
 
 import { CompanyRepository } from '../repositories/CompanyRepository.js';
@@ -10,7 +11,6 @@ import { RoleRepository } from '../repositories/RoleRepository.js';
 import { UserRepository } from '../repositories/UserRepository.js';
 
 export interface AuthUser {
-
     userId: string;
 
     companyId: string;
@@ -26,25 +26,29 @@ export interface AuthUser {
     email: string;
 
     companyName: string;
-
 }
 
 export class AuthService {
 
-    private readonly users = new UserRepository();
+    private readonly users =
+    new UserRepository();
 
-    private readonly companies = new CompanyRepository();
+    private readonly companies =
+    new CompanyRepository();
 
-    private readonly companyUsers = new CompanyUserRepository();
+    private readonly companyUsers =
+    new CompanyUserRepository();
 
-    private readonly roles = new RoleRepository();
+    private readonly roles =
+    new RoleRepository();
 
     public async login(
         email: string,
         password: string
     ): Promise<AuthUser> {
 
-        const user = await this.users.findByEmail(
+        const user =
+        await this.users.findByEmail(
             email.trim().toLowerCase()
         );
 
@@ -64,7 +68,8 @@ export class AuthService {
 
         }
 
-        const validPassword = await argon2.verify(
+        const validPassword =
+        await argon2.verify(
             user.password_hash,
             password
         );
@@ -90,7 +95,8 @@ export class AuthService {
 
         }
 
-        const companyUser = companyUsers[0];
+        const companyUser =
+        companyUsers[0];
 
         const company =
         await this.companies.findById(
@@ -145,21 +151,29 @@ export class AuthService {
 
         return {
 
-            userId: user.id,
+            userId:
+            user.id,
 
-            companyId: company.id,
+            companyId:
+            company.id,
 
-            roleId: role.id,
+            roleId:
+            role.id,
 
-            roleCode: role.code,
+            roleCode:
+            role.code,
 
-            firstName: user.firstname,
+            firstName:
+            user.firstname,
 
-            lastName: user.lastname,
+            lastName:
+            user.lastname,
 
-            email: user.email,
+            email:
+            user.email,
 
-            companyName: company.name
+            companyName:
+            company.name
 
         };
 
@@ -264,25 +278,100 @@ export class AuthService {
 
         return {
 
-            userId: user.id,
+            userId:
+            user.id,
 
-            firstName: user.firstname,
+            firstName:
+            user.firstname,
 
-            lastName: user.lastname,
+            lastName:
+            user.lastname,
 
-            email: user.email,
+            email:
+            user.email,
 
-            phone: user.phone,
+            phone:
+            user.phone,
 
-            isActive: user.is_active,
+            isActive:
+            user.is_active,
 
-            companyId: company.id,
+            companyId:
+            company.id,
 
-            companyName: company.name,
+            companyName:
+            company.name,
 
-            roleCode: role.code
+            roleCode:
+            role.code
 
         };
+
+    }
+
+    public async updateProfile(
+        userId: string,
+        profile: {
+            first_name: string;
+            last_name: string;
+            email: string;
+            phone: string | null;
+        }
+    ): Promise<void> {
+
+        const user =
+        await this.users.findById(
+            userId
+        );
+
+        if (!user) {
+
+            throw new AuthenticationError(
+                'Utilisateur introuvable.'
+            );
+
+        }
+
+        if (!user.is_active) {
+
+            throw new AuthorizationError(
+                'Utilisateur désactivé.'
+            );
+
+        }
+
+        const existingUser =
+        await this.users.findByEmail(
+            profile.email
+        );
+
+        if (
+            existingUser &&
+            existingUser.id !== userId
+        ) {
+
+            throw new ConflictError(
+                'Cette adresse e-mail est déjà utilisée.'
+            );
+
+        }
+
+        await this.users.updateProfile(
+            userId,
+            {
+                first_name:
+                profile.first_name,
+
+                last_name:
+                profile.last_name,
+
+                email:
+                profile.email,
+
+                phone:
+                profile.phone
+            }
+        );
 
     }
 

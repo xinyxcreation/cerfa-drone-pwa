@@ -117,7 +117,28 @@ export class UserRepository extends BaseRepository {
         );
 
     }
+    public async updateProfile(
+        id: string,
+        profile: {
+            first_name: string;
+            last_name: string;
+            email: string;
+            phone: string | null;
+        }
+    ): Promise<void> {
 
+        await this.baseUpdate(
+            this.table,
+            id,
+            {
+                firstname: profile.first_name,
+                lastname: profile.last_name,
+                email: profile.email,
+                phone: profile.phone
+            }
+        );
+
+    }
     public async deactivate(
         id: string
     ): Promise<void> {

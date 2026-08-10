@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../features/auth/models/current_user.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/management/presentation/management_page.dart';
+import '../../features/profile/presentation/profile_page.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({
@@ -86,6 +87,12 @@ class _AppShellState extends State<AppShell> {
           ManagementPage(
             user: widget.user,
           ),
+
+          // --------------------------------------------------------
+          // 5 — MON PROFIL
+          // --------------------------------------------------------
+
+          const ProfilePage(),
         ],
       ),
 
@@ -195,7 +202,7 @@ class _BottomNavigation extends StatelessWidget {
                   currentIndex: currentIndex,
                   icon: Icons.bar_chart_outlined,
                   activeIcon: Icons.bar_chart,
-                  label: 'Statistiques',
+                  label: 'Stats',
                   onTap: onSelected,
                 ),
               ),
@@ -211,6 +218,21 @@ class _BottomNavigation extends StatelessWidget {
                   icon: Icons.settings_outlined,
                   activeIcon: Icons.settings,
                   label: 'Gestion',
+                  onTap: onSelected,
+                ),
+              ),
+
+              // ====================================================
+              // PROFIL
+              // ====================================================
+
+              Expanded(
+                child: _NavigationItem(
+                  index: 5,
+                  currentIndex: currentIndex,
+                  icon: Icons.person_outline,
+                  activeIcon: Icons.person,
+                  label: 'Profil',
                   onTap: onSelected,
                 ),
               ),
@@ -262,7 +284,7 @@ class _NavigationItem extends StatelessWidget {
             duration: const Duration(
               milliseconds: 180,
             ),
-            width: 56,
+            width: 50,
             height: 30,
             decoration: BoxDecoration(
               color: active
@@ -284,7 +306,7 @@ class _NavigationItem extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: active
               ? FontWeight.w600
               : FontWeight.w400,
@@ -292,6 +314,7 @@ class _NavigationItem extends StatelessWidget {
               ? red
               : const Color(0xFF444444),
             ),
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -355,7 +378,7 @@ class _NewMissionButton extends StatelessWidget {
           const Text(
             'Nouvelle',
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10,
               color: Color(0xFF444444),
             ),
           ),

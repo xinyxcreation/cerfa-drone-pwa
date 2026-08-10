@@ -26,13 +26,23 @@ class ApiClient {
         final token =
         await SessionStorage.getAccessToken();
 
-        if (token != null &&
-          token.isNotEmpty) {
+        if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] =
           'Bearer $token';
-          }
+        }
 
-          handler.next(options);
+        handler.next(options);
+      },
+
+      onError: (
+        error,
+        handler,
+      ) async {
+        if (error.response?.statusCode == 401) {
+          await SessionStorage.clear();
+        }
+
+        handler.next(error);
       },
     ),
   );
