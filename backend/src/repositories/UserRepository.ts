@@ -3,7 +3,6 @@ import { RowDataPacket } from 'mysql2/promise';
 import { BaseRepository } from './BaseRepository.js';
 
 export interface User extends RowDataPacket {
-
     id: string;
 
     email: string;
@@ -25,7 +24,6 @@ export interface User extends RowDataPacket {
     deleted_at: Date | null;
 
     sync_cursor: number;
-
 }
 
 export class UserRepository extends BaseRepository {
@@ -40,7 +38,6 @@ export class UserRepository extends BaseRepository {
             this.table,
             id
         );
-
     }
 
     public async findByEmail(
@@ -52,7 +49,6 @@ export class UserRepository extends BaseRepository {
             'email',
             email.trim().toLowerCase()
         );
-
     }
 
     public async create(
@@ -68,22 +64,34 @@ export class UserRepository extends BaseRepository {
         return this.baseInsert(
             this.table,
             {
-                email: user.email,
-                password_hash: user.password_hash,
+                email:
+                user.email.trim().toLowerCase(),
 
-                firstname: user.firstname,
-                lastname: user.lastname,
+                password_hash:
+                user.password_hash,
 
-                phone: user.phone ?? null,
+                firstname:
+                user.firstname.trim(),
 
-                is_active: true,
+                lastname:
+                user.lastname.trim(),
 
-                email_verified_at: null,
-                last_company_id: null,
-                last_login_at: null
+                phone:
+                user.phone ?? null,
+
+                is_active:
+                true,
+
+                email_verified_at:
+                null,
+
+                last_company_id:
+                null,
+
+                last_login_at:
+                null
             }
         );
-
     }
 
     public async updateLastLogin(
@@ -94,13 +102,12 @@ export class UserRepository extends BaseRepository {
             `
             UPDATE users
             SET
-            last_login_at = UTC_TIMESTAMP(6),
-                              updated_at = UTC_TIMESTAMP(6)
-                              WHERE id = ?
-                              `,
-                              [id]
+                last_login_at = UTC_TIMESTAMP(6),
+                updated_at = UTC_TIMESTAMP(6)
+            WHERE id = ?
+            `,
+            [id]
         );
-
     }
 
     public async updateLastCompany(
@@ -112,11 +119,12 @@ export class UserRepository extends BaseRepository {
             this.table,
             id,
             {
-                last_company_id: companyId
+                last_company_id:
+                companyId
             }
         );
-
     }
+
     public async updateProfile(
         id: string,
         profile: {
@@ -131,14 +139,21 @@ export class UserRepository extends BaseRepository {
             this.table,
             id,
             {
-                firstname: profile.first_name,
-                lastname: profile.last_name,
-                email: profile.email,
-                phone: profile.phone
+                firstname:
+                profile.first_name.trim(),
+
+                lastname:
+                profile.last_name.trim(),
+
+                email:
+                profile.email.trim().toLowerCase(),
+
+                phone:
+                profile.phone
             }
         );
-
     }
+
     public async deactivate(
         id: string
     ): Promise<void> {
@@ -150,7 +165,6 @@ export class UserRepository extends BaseRepository {
                 is_active: false
             }
         );
-
     }
 
     public async delete(
@@ -161,7 +175,5 @@ export class UserRepository extends BaseRepository {
             this.table,
             id
         );
-
     }
-
 }

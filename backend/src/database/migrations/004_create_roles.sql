@@ -27,7 +27,7 @@ CREATE TABLE roles (
 
 ) ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;-- 003_create_roles.sql
+COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO roles (
     id,
@@ -39,5 +39,33 @@ INSERT INTO roles (
     updated_at,
     sync_cursor
 ) VALUES
-(UUID(), 'manager', 'Gérant', 1, TRUE, UTC_TIMESTAMP(6), UTC_TIMESTAMP(6), 0),
-(UUID(), 'pilot', 'Pilote', 2, TRUE, UTC_TIMESTAMP(6), UTC_TIMESTAMP(6), 0);
+(
+    UUID(),
+    'OWNER',
+    'Propriétaire',
+    1,
+    TRUE,
+    UTC_TIMESTAMP(6),
+    UTC_TIMESTAMP(6),
+    0
+),
+(
+    UUID(),
+    'MANAGER',
+    'Gestionnaire',
+    2,
+    TRUE,
+    UTC_TIMESTAMP(6),
+    UTC_TIMESTAMP(6),
+    0
+),
+(
+    UUID(),
+    'USER',
+    'Utilisateur',
+    3,
+    TRUE,
+    UTC_TIMESTAMP(6),
+    UTC_TIMESTAMP(6),
+    0
+);

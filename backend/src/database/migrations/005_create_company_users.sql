@@ -5,6 +5,7 @@ CREATE TABLE company_users (
     user_id CHAR(36) NOT NULL,
     role_id CHAR(36) NOT NULL,
 
+    is_pilot BOOLEAN NOT NULL DEFAULT FALSE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
 
     joined_at DATETIME(6) NOT NULL,
@@ -22,12 +23,26 @@ CREATE TABLE company_users (
     CONSTRAINT uq_company_users_company_user
         UNIQUE (company_id, user_id),
 
-    INDEX idx_company_users_company (company_id),
-    INDEX idx_company_users_user (user_id),
-    INDEX idx_company_users_role (role_id),
-    INDEX idx_company_users_active (is_active),
-    INDEX idx_company_users_deleted_at (deleted_at),
-    INDEX idx_company_users_sync_cursor (sync_cursor),
+    INDEX idx_company_users_company
+        (company_id),
+
+    INDEX idx_company_users_user
+        (user_id),
+
+    INDEX idx_company_users_role
+        (role_id),
+
+    INDEX idx_company_users_pilot
+        (is_pilot),
+
+    INDEX idx_company_users_active
+        (is_active),
+
+    INDEX idx_company_users_deleted_at
+        (deleted_at),
+
+    INDEX idx_company_users_sync_cursor
+        (sync_cursor),
 
     CONSTRAINT fk_company_users_company
         FOREIGN KEY (company_id)
@@ -49,4 +64,4 @@ CREATE TABLE company_users (
 
 ) ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;-- 004_create_company_users.sql
+COLLATE=utf8mb4_unicode_ci;

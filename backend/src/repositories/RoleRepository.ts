@@ -3,7 +3,6 @@ import { RowDataPacket } from 'mysql2/promise';
 import { BaseRepository } from './BaseRepository.js';
 
 export interface Role extends RowDataPacket {
-
     id: string;
 
     code: string;
@@ -18,7 +17,6 @@ export interface Role extends RowDataPacket {
     deleted_at: Date | null;
 
     sync_cursor: number;
-
 }
 
 export class RoleRepository extends BaseRepository {
@@ -33,7 +31,6 @@ export class RoleRepository extends BaseRepository {
             this.table,
             id
         );
-
     }
 
     public async findByCode(
@@ -43,14 +40,14 @@ export class RoleRepository extends BaseRepository {
         return this.baseFindOneBy<Role>(
             this.table,
             'code',
-            code
+            code.trim().toUpperCase()
         );
-
     }
 
     public async findAll(): Promise<Role[]> {
 
-        const [rows] = await this.db.query<Role[]>(
+        const [rows] =
+        await this.db.query<Role[]>(
             `
             SELECT *
             FROM roles
@@ -61,7 +58,5 @@ export class RoleRepository extends BaseRepository {
         );
 
         return rows;
-
     }
-
 }
