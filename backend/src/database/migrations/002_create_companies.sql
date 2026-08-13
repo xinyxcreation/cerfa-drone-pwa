@@ -6,7 +6,7 @@ CREATE TABLE companies (
     contact_name VARCHAR(255) NULL,
 
     siret CHAR(14) NULL,
-    alphatango_operator_number VARCHAR(50) NOT NULL,
+    alphatango_operator_number VARCHAR(50) NULL,
 
     email VARCHAR(255) NULL,
     phone VARCHAR(30) NULL,
@@ -46,5 +46,5 @@ CREATE TABLE companies (
     INDEX idx_companies_sync_cursor (sync_cursor)
 
 ) ENGINE=InnoDB
-DEFAULT CHARSET = utf8mb4
-COLLATE = utf8mb4_unicode_ci;
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;

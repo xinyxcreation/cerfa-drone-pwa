@@ -23,7 +23,7 @@ export interface CreatedPilot {
     phone: string | null;
 
     role: string;
-
+    isPilot: boolean;
 }
 
 export class CompanyPilotService {
@@ -40,6 +40,10 @@ export class CompanyPilotService {
     private readonly roles =
     new RoleRepository();
 
+    // ============================================================
+    // AJOUTER / RATTACHER UN PILOTE
+    // ============================================================
+
     public async create(
         companyId: string,
         requesterRole: string,
@@ -50,11 +54,9 @@ export class CompanyPilotService {
             requesterRole !== 'OWNER' &&
             requesterRole !== 'MANAGER'
         ) {
-
             throw new AuthorizationError(
                 'Vous n’avez pas l’autorisation de créer un pilote.'
             );
-
         }
 
         const company =
@@ -63,54 +65,116 @@ export class CompanyPilotService {
         );
 
         if (!company) {
-
             throw new NotFoundError(
                 'Entreprise introuvable.'
             );
-
         }
 
         if (!company.is_active) {
-
             throw new AuthorizationError(
                 'Entreprise désactivée.'
             );
-
         }
+
+        // --------------------------------------------------------
+        // UN COMPTE EXISTE DÉJÀ
+        // --------------------------------------------------------
 
         const existingUser =
         await this.users.findByEmail(
             input.email
         );
 
-        if (existingUser) {
+        // --------------------------------------------------------
+        // RÔLE GÉNÉRIQUE DE L'UTILISATEUR
+        // --------------------------------------------------------
 
-            throw new ConflictError(
-                'Cette adresse e-mail est déjà utilisée.'
-            );
-
-        }
-
-        const role =
+        const userRole =
         await this.roles.findByCode(
-            'PILOT'
+            'USER'
         );
 
-        if (!role) {
-
+        if (!userRole) {
             throw new NotFoundError(
-                'Rôle PILOT introuvable.'
+                'Rôle USER introuvable.'
             );
-
         }
 
-        if (!role.is_active) {
-
+        if (!userRole.is_active) {
             throw new AuthorizationError(
-                'Le rôle PILOT est désactivé.'
+                'Le rôle USER est désactivé.'
+            );
+        }
+
+        // --------------------------------------------------------
+        // COMPTE EXISTANT
+        //
+        // On NE crée PAS de deuxième compte.
+        // On rattache simplement l'utilisateur existant.
+        // --------------------------------------------------------
+
+        if (existingUser) {
+
+            if (!existingUser.is_active) {
+                throw new AuthorizationError(
+                    'Ce compte utilisateur est désactivé.'
+                );
+            }
+
+            const existingMembership =
+            await this.companyUsers
+            .findByCompanyAndUser(
+                companyId,
+                existingUser.id
             );
 
+            // Déjà membre de l'entreprise
+            if (existingMembership) {
+
+                if (existingMembership.is_pilot) {
+                    throw new ConflictError(
+                        'Cet utilisateur est déjà pilote dans cette entreprise.'
+                    );
+                }
+
+                await this.companyUsers.setPilot(
+                    companyId,
+                    existingUser.id,
+                    true
+                );
+
+            } else {
+
+                await this.companyUsers.create(
+                    companyId,
+                    existingUser.id,
+                    userRole.id,
+                    true
+                );
+
+            }
+
+            return {
+
+                id: existingUser.id,
+
+                email: existingUser.email,
+
+                firstname: existingUser.firstname,
+
+                lastname: existingUser.lastname,
+
+                phone: existingUser.phone,
+
+                role: userRole.code,
+
+                isPilot: true
+            };
         }
+
+        // --------------------------------------------------------
+        // NOUVEAU COMPTE
+        // --------------------------------------------------------
 
         const passwordHash =
         await argon2.hash(
@@ -120,7 +184,8 @@ export class CompanyPilotService {
         const userId =
         await this.users.create({
 
-            email: input.email,
+            email:
+            input.email,
 
             password_hash:
             passwordHash,
@@ -136,17 +201,27 @@ export class CompanyPilotService {
 
         });
 
+        // --------------------------------------------------------
+        // RATTACHEMENT À L'ENTREPRISE
+        //
+        // USER = rôle applicatif
+        // is_pilot = fonction pilote
+        // --------------------------------------------------------
+
         await this.companyUsers.create(
             companyId,
             userId,
-            role.id
+            userRole.id,
+            true
         );
 
         return {
 
-            id: userId,
+            id:
+            userId,
 
-            email: input.email,
+            email:
+            input.email,
 
             firstname:
             input.firstname,
@@ -157,11 +232,80 @@ export class CompanyPilotService {
             phone:
             input.phone ?? null,
 
-            role: role.code
+            role:
+            userRole.code,
 
+            isPilot:
+            true
         };
-
     }
+
+    // ============================================================
+    // ACTIVER / DÉSACTIVER SON PROPRE STATUT PILOTE
+    // ============================================================
+
+    public async setCurrentUserPilot(
+        companyId: string,
+        userId: string,
+        isPilot: boolean
+    ): Promise<void> {
+
+        const company =
+        await this.companies.findById(
+            companyId
+        );
+
+        if (!company) {
+            throw new NotFoundError(
+                'Entreprise introuvable.'
+            );
+        }
+
+        if (!company.is_active) {
+            throw new AuthorizationError(
+                'Entreprise désactivée.'
+            );
+        }
+
+        const user =
+        await this.users.findById(
+            userId
+        );
+
+        if (!user) {
+            throw new NotFoundError(
+                'Utilisateur introuvable.'
+            );
+        }
+
+        if (!user.is_active) {
+            throw new AuthorizationError(
+                'Utilisateur désactivé.'
+            );
+        }
+
+        const membership =
+        await this.companyUsers.findByCompanyAndUser(
+            companyId,
+            userId
+        );
+
+        if (!membership) {
+            throw new AuthorizationError(
+                'Utilisateur non associé à cette entreprise.'
+            );
+        }
+
+        await this.companyUsers.setPilot(
+            companyId,
+            userId,
+            isPilot
+        );
+    }
+
+    // ============================================================
+    // DÉSACTIVER LE STATUT PILOTE
+    // ============================================================
 
     public async deactivate(
         companyId: string,
@@ -173,11 +317,9 @@ export class CompanyPilotService {
             requesterRole !== 'OWNER' &&
             requesterRole !== 'MANAGER'
         ) {
-
             throw new AuthorizationError(
                 'Vous n’avez pas l’autorisation de désactiver un pilote.'
             );
-
         }
 
         const company =
@@ -186,45 +328,39 @@ export class CompanyPilotService {
         );
 
         if (!company) {
-
             throw new NotFoundError(
                 'Entreprise introuvable.'
             );
-
         }
 
         if (!company.is_active) {
-
             throw new AuthorizationError(
                 'Entreprise désactivée.'
             );
-
         }
 
-        const pilots =
+        const membership =
         await this.companyUsers
-        .findPilotsByCompanyId(
-            companyId
+        .findByCompanyAndUser(
+            companyId,
+            pilotId
         );
 
-        const pilot =
-        pilots.find(
-            item =>
-            item.user_id === pilotId
-        );
-
-        if (!pilot) {
-
+        if (!membership) {
             throw new NotFoundError(
-                'Pilote introuvable dans cette entreprise.'
+                'Utilisateur introuvable dans cette entreprise.'
             );
-
         }
 
-        await this.companyUsers.deactivate(
-            pilot.id
+        if (!membership.is_pilot) {
+            throw new NotFoundError(
+                'Cet utilisateur n’est pas pilote dans cette entreprise.'
+            );
+        }
+
+        await this.companyUsers.deactivatePilot(
+            companyId,
+            pilotId
         );
-
     }
-
 }

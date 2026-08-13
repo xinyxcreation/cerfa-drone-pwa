@@ -20,8 +20,11 @@ import {
 } from '../errors/AuthorizationError.js';
 
 interface AuthPayload {
+
     sub: string;
+
     company_id: string;
+
     role: string;
 }
 
@@ -41,12 +44,16 @@ export class CompanyPilotController {
             role !== 'OWNER' &&
             role !== 'MANAGER'
         ) {
+
             throw new AuthorizationError(
                 'Vous n’avez pas l’autorisation de gérer les pilotes.'
             );
         }
-
     }
+
+    // ============================================================
+    // LISTE DES PILOTES
+    // ============================================================
 
     public async list(
         request: FastifyRequest,
@@ -57,6 +64,7 @@ export class CompanyPilotController {
         await request.jwtVerify<AuthPayload>();
 
         if (!payload.company_id) {
+
             throw new AuthorizationError(
                 'Entreprise introuvable dans la session.'
             );
@@ -77,9 +85,11 @@ export class CompanyPilotController {
 
             pilots: pilots.map(pilot => ({
 
-                id: pilot.user_id,
+                id:
+                pilot.user_id,
 
-                email: pilot.email,
+                email:
+                pilot.email,
 
                 first_name:
                 pilot.firstname,
@@ -93,14 +103,16 @@ export class CompanyPilotController {
                 joined_at:
                 pilot.joined_at,
 
-                role:
-                pilot.role_code
+                is_pilot:
+                pilot.is_pilot
 
             }))
-
         });
-
     }
+
+    // ============================================================
+    // AJOUTER / RATTACHER UN PILOTE
+    // ============================================================
 
     public async create(
         request: FastifyRequest,
@@ -111,6 +123,7 @@ export class CompanyPilotController {
         await request.jwtVerify<AuthPayload>();
 
         if (!payload.company_id) {
+
             throw new AuthorizationError(
                 'Entreprise introuvable dans la session.'
             );
@@ -138,9 +151,11 @@ export class CompanyPilotController {
 
             pilot: {
 
-                id: pilot.id,
+                id:
+                pilot.id,
 
-                email: pilot.email,
+                email:
+                pilot.email,
 
                 first_name:
                 pilot.firstname,
@@ -151,14 +166,84 @@ export class CompanyPilotController {
                 phone:
                 pilot.phone,
 
-                role:
-                pilot.role
+                is_pilot:
+                pilot.isPilot
 
             }
+        });
+    }
+
+    // ============================================================
+    // MOI-MÊME : DEVENIR PILOTE
+    // ============================================================
+
+    public async activateMe(
+        request: FastifyRequest,
+        reply: FastifyReply
+    ): Promise<void> {
+
+        const payload =
+        await request.jwtVerify<AuthPayload>();
+
+        if (!payload.company_id) {
+
+            throw new AuthorizationError(
+                'Entreprise introuvable dans la session.'
+            );
+        }
+
+        await this.service.setCurrentUserPilot(
+            payload.company_id,
+            payload.sub,
+            true
+        );
+
+        reply.send({
+
+            success: true,
+
+            is_pilot: true
 
         });
-
     }
+
+    // ============================================================
+    // MOI-MÊME : NE PLUS ÊTRE PILOTE
+    // ============================================================
+
+    public async deactivateMe(
+        request: FastifyRequest,
+        reply: FastifyReply
+    ): Promise<void> {
+
+        const payload =
+        await request.jwtVerify<AuthPayload>();
+
+        if (!payload.company_id) {
+
+            throw new AuthorizationError(
+                'Entreprise introuvable dans la session.'
+            );
+        }
+
+        await this.service.setCurrentUserPilot(
+            payload.company_id,
+            payload.sub,
+            false
+        );
+
+        reply.send({
+
+            success: true,
+
+            is_pilot: false
+
+        });
+    }
+
+    // ============================================================
+    // DÉSACTIVER UN AUTRE PILOTE
+    // ============================================================
 
     public async deactivate(
         request: FastifyRequest,
@@ -169,6 +254,7 @@ export class CompanyPilotController {
         await request.jwtVerify<AuthPayload>();
 
         if (!payload.company_id) {
+
             throw new AuthorizationError(
                 'Entreprise introuvable dans la session.'
             );
@@ -183,13 +269,13 @@ export class CompanyPilotController {
             pilotId: string;
         };
 
-        /*
-         * Protection supplémentaire :
-         * on interdit de désactiver son propre compte.
-         */
-        if (params.pilotId === payload.sub) {
+        if (
+            params.pilotId ===
+            payload.sub
+        ) {
+
             throw new AuthorizationError(
-                'Vous ne pouvez pas désactiver votre propre compte.'
+                'Utilisez votre propre statut pilote pour modifier votre statut.'
             );
         }
 
@@ -204,7 +290,5 @@ export class CompanyPilotController {
             success: true
 
         });
-
     }
-
 }

@@ -38,7 +38,8 @@ INSERT INTO roles (
     created_at,
     updated_at,
     sync_cursor
-) VALUES
+)
+VALUES
 (
     UUID(),
     'OWNER',

@@ -23,26 +23,13 @@ CREATE TABLE company_users (
     CONSTRAINT uq_company_users_company_user
         UNIQUE (company_id, user_id),
 
-    INDEX idx_company_users_company
-        (company_id),
-
-    INDEX idx_company_users_user
-        (user_id),
-
-    INDEX idx_company_users_role
-        (role_id),
-
-    INDEX idx_company_users_pilot
-        (is_pilot),
-
-    INDEX idx_company_users_active
-        (is_active),
-
-    INDEX idx_company_users_deleted_at
-        (deleted_at),
-
-    INDEX idx_company_users_sync_cursor
-        (sync_cursor),
+    INDEX idx_company_users_company (company_id),
+    INDEX idx_company_users_user (user_id),
+    INDEX idx_company_users_role (role_id),
+    INDEX idx_company_users_pilot (is_pilot),
+    INDEX idx_company_users_active (is_active),
+    INDEX idx_company_users_deleted_at (deleted_at),
+    INDEX idx_company_users_sync_cursor (sync_cursor),
 
     CONSTRAINT fk_company_users_company
         FOREIGN KEY (company_id)

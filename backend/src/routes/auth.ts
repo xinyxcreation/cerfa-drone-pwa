@@ -9,41 +9,79 @@ export default async function authRoutes(
 ): Promise<void> {
 
     const controller =
-    new AuthController();
+        new AuthController();
 
     const pilotController =
-    new CompanyPilotController();
+        new CompanyPilotController();
 
     const companyController =
-    new CompanyController();
+        new CompanyController();
+
+    // ============================================================
+    // AUTHENTIFICATION
+    // ============================================================
 
     app.post(
         '/login',
         controller.login.bind(controller)
     );
 
+    // ============================================================
+    // PROFIL UTILISATEUR
+    // ============================================================
+
     app.get(
         '/me',
         {
             preHandler: async request => {
-
                 await request.jwtVerify();
-
             }
         },
         controller.me.bind(controller)
     );
+
     app.put(
         '/me',
         {
             preHandler: async request => {
-
                 await request.jwtVerify();
-
             }
         },
         controller.updateMe.bind(controller)
     );
+
+    // ============================================================
+    // STATUT PILOTE DE L'UTILISATEUR CONNECTÉ
+    // ============================================================
+
+    app.put(
+        '/me/pilot',
+        {
+            preHandler: async request => {
+                await request.jwtVerify();
+            }
+        },
+        pilotController.activateMe.bind(
+            pilotController
+        )
+    );
+
+    app.delete(
+        '/me/pilot',
+        {
+            preHandler: async request => {
+                await request.jwtVerify();
+            }
+        },
+        pilotController.deactivateMe.bind(
+            pilotController
+        )
+    );
+
+    // ============================================================
+    // ENTREPRISE
+    // ============================================================
+
     app.get(
         '/company',
         {
@@ -51,7 +89,9 @@ export default async function authRoutes(
                 await request.jwtVerify();
             }
         },
-        companyController.get.bind(companyController)
+        companyController.get.bind(
+            companyController
+        )
     );
 
     app.put(
@@ -61,16 +101,20 @@ export default async function authRoutes(
                 await request.jwtVerify();
             }
         },
-        companyController.update.bind(companyController)
+        companyController.update.bind(
+            companyController
+        )
     );
+
+    // ============================================================
+    // PILOTES DE L'ENTREPRISE
+    // ============================================================
 
     app.get(
         '/company/pilots',
         {
             preHandler: async request => {
-
                 await request.jwtVerify();
-
             }
         },
         pilotController.list.bind(
@@ -82,15 +126,14 @@ export default async function authRoutes(
         '/company/pilots',
         {
             preHandler: async request => {
-
                 await request.jwtVerify();
-
             }
         },
         pilotController.create.bind(
             pilotController
         )
     );
+
     app.delete(
         '/company/pilots/:pilotId',
         {
@@ -102,5 +145,4 @@ export default async function authRoutes(
             pilotController
         )
     );
-
 }

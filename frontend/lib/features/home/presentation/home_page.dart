@@ -32,30 +32,30 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF111111),
         foregroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          titleSpacing: 16,
-          title: const Text(
-            'CERFA DRONE',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
+        automaticallyImplyLeading: false,
+        titleSpacing: 16,
+        title: const Text(
+          'CERFA DRONE',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications_none_outlined,
             ),
           ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.notifications_none_outlined,
-              ),
+          IconButton(
+            tooltip: 'Déconnexion',
+            onPressed: _logout,
+            icon: const Icon(
+              Icons.logout_outlined,
             ),
-            IconButton(
-              tooltip: 'Déconnexion',
-              onPressed: _logout,
-              icon: const Icon(
-                Icons.logout_outlined,
-              ),
-            ),
-          ],
+          ),
+        ],
       ),
 
       // ============================================================
@@ -71,13 +71,14 @@ class HomePage extends StatelessWidget {
             120,
           ),
           children: [
+
             // --------------------------------------------------------
             // UTILISATEUR / ENTREPRISE
             // --------------------------------------------------------
 
-            const Text(
-              'Bonjour 👋',
-              style: TextStyle(
+            Text(
+              'Bonjour ${user.firstName} 👋',
+              style: const TextStyle(
                 fontSize: 27,
                 fontWeight: FontWeight.w800,
                 color: Color(0xFF222222),
@@ -193,8 +194,8 @@ class HomePage extends StatelessWidget {
       // ============================================================
 
       bottomNavigationBar: showNavigation
-      ? const _BottomNavigation()
-      : null,
+          ? const _BottomNavigation()
+          : null,
     );
   }
 }
@@ -234,6 +235,7 @@ class _BottomNavigation extends StatelessWidget {
           ),
           child: Row(
             children: [
+
               Expanded(
                 child: _NavigationItem(
                   icon: Icons.home_outlined,
@@ -313,6 +315,7 @@ class _NavigationItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+
           AnimatedContainer(
             duration: const Duration(
               milliseconds: 180,
@@ -321,16 +324,16 @@ class _NavigationItem extends StatelessWidget {
             height: 30,
             decoration: BoxDecoration(
               color: active
-              ? const Color(0xFFFFE4E4)
-              : Colors.transparent,
+                  ? const Color(0xFFFFE4E4)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(18),
             ),
             child: Icon(
               active ? activeIcon : icon,
               size: 22,
               color: active
-              ? red
-              : const Color(0xFF444444),
+                  ? red
+                  : const Color(0xFF444444),
             ),
           ),
 
@@ -341,11 +344,11 @@ class _NavigationItem extends StatelessWidget {
             style: TextStyle(
               fontSize: 11,
               fontWeight: active
-              ? FontWeight.w600
-              : FontWeight.w400,
+                  ? FontWeight.w600
+                  : FontWeight.w400,
               color: active
-              ? red
-              : const Color(0xFF444444),
+                  ? red
+                  : const Color(0xFF444444),
             ),
           ),
         ],
@@ -375,6 +378,7 @@ class _NewMissionButton extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+
           Container(
             width: 36,
             height: 36,
@@ -452,6 +456,7 @@ class _AlertCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
+
               Container(
                 width: 44,
                 height: 44,
@@ -470,8 +475,9 @@ class _AlertCard extends StatelessWidget {
               const Expanded(
                 child: Column(
                   crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                      CrossAxisAlignment.start,
                   children: [
+
                     Text(
                       '3 alertes',
                       style: TextStyle(
@@ -536,8 +542,9 @@ class _MissionCard extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         child: Row(
           crossAxisAlignment:
-          CrossAxisAlignment.start,
+              CrossAxisAlignment.start,
           children: [
+
             SizedBox(
               width: 54,
               child: Text(
@@ -553,8 +560,9 @@ class _MissionCard extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment:
-                CrossAxisAlignment.start,
+                    CrossAxisAlignment.start,
                 children: [
+
                   Text(
                     title,
                     style: const TextStyle(
@@ -632,6 +640,7 @@ class _DashboardActionCard extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           child: Row(
             children: [
+
               Container(
                 width: 44,
                 height: 44,
@@ -650,8 +659,9 @@ class _DashboardActionCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                      CrossAxisAlignment.start,
                   children: [
+
                     Text(
                       title,
                       style: const TextStyle(
