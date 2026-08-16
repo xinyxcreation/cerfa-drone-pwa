@@ -9,7 +9,7 @@ CREATE TABLE subscription_plans (
     price_cents INT UNSIGNED NOT NULL DEFAULT 0,
 
     ads_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    max_pilots SMALLINT UNSIGNED NULL,
+    max_users SMALLINT UNSIGNED NULL,
 
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
 
@@ -41,7 +41,7 @@ INSERT INTO subscription_plans (
     label,
     price_cents,
     ads_enabled,
-    max_pilots,
+    max_users,
     is_active,
     created_at,
     updated_at,

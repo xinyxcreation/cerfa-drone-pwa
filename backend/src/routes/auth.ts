@@ -26,6 +26,14 @@ export default async function authRoutes(
         controller.login.bind(controller)
     );
 
+    app.post(
+        '/register',
+        controller.register.bind(
+            controller
+        )
+    );
+
+
     // ============================================================
     // PROFIL UTILISATEUR
     // ============================================================

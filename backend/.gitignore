@@ -4,3 +4,6 @@ dist/
 *.log
 
 .token
+.admin-token
+.pilot-token
+.moderator-token

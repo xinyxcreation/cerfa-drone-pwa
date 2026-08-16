@@ -61,7 +61,8 @@ export class UserRepository extends BaseRepository {
         }
     ): Promise<string> {
 
-        return this.baseInsert(
+        const userId =
+        await this.baseInsert(
             this.table,
             {
                 email:
@@ -92,6 +93,62 @@ export class UserRepository extends BaseRepository {
                 null
             }
         );
+
+        const [plans] =
+        await this.db.query<
+            Array<RowDataPacket & { id: string }>
+        >(
+            `
+            SELECT id
+            FROM subscription_plans
+            WHERE code = 'FREE'
+            AND type = 'USER'
+            AND is_active = TRUE
+            AND deleted_at IS NULL
+            LIMIT 1
+            `
+        );
+
+        if (plans.length === 0) {
+            throw new Error(
+                'Plan utilisateur FREE introuvable.'
+            );
+        }
+
+        await this.db.execute(
+            `
+            INSERT INTO user_subscriptions (
+                id,
+                user_id,
+                subscription_plan_id,
+                status,
+                started_at,
+                expires_at,
+                cancelled_at,
+                created_at,
+                updated_at,
+                sync_cursor
+            )
+            VALUES (
+                UUID(),
+                ?,
+                ?,
+                'ACTIVE',
+                UTC_TIMESTAMP(6),
+                NULL,
+                NULL,
+                UTC_TIMESTAMP(6),
+                UTC_TIMESTAMP(6),
+                0
+            )
+            `,
+            [
+                userId,
+                plans[0].id
+            ]
+        );
+
+        return userId;
     }
 
     public async updateLastLogin(

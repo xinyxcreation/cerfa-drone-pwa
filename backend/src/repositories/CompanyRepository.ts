@@ -1,6 +1,9 @@
 import { RowDataPacket } from 'mysql2/promise';
 
 import { BaseRepository } from './BaseRepository.js';
+import {
+    CompanySubscriptionRepository
+} from './CompanySubscriptionRepository.js';
 
 export interface Company extends RowDataPacket {
     id: string;
@@ -40,6 +43,9 @@ export class CompanyRepository extends BaseRepository {
 
     private readonly table = 'companies';
 
+    private readonly subscriptions =
+    new CompanySubscriptionRepository();
+
     public async findById(
         id: string
     ): Promise<Company | null> {
@@ -71,7 +77,8 @@ export class CompanyRepository extends BaseRepository {
         }
     ): Promise<string> {
 
-        return this.baseInsert(
+        const companyId =
+        await this.baseInsert(
             this.table,
             {
                 name: company.name,
@@ -94,6 +101,62 @@ export class CompanyRepository extends BaseRepository {
                 notes: company.notes ?? null
             }
         );
+
+        const [plans] =
+        await this.db.query<
+            Array<RowDataPacket & { id: string }>
+        >(
+            `
+            SELECT id
+            FROM subscription_plans
+            WHERE code = 'FREE_COMPANY'
+            AND type = 'COMPANY'
+            AND is_active = TRUE
+            AND deleted_at IS NULL
+            LIMIT 1
+            `
+        );
+
+        if (plans.length === 0) {
+            throw new Error(
+                'Plan entreprise FREE introuvable.'
+            );
+        }
+
+        await this.db.execute(
+            `
+            INSERT INTO company_subscriptions (
+                id,
+                company_id,
+                subscription_plan_id,
+                status,
+                started_at,
+                expires_at,
+                cancelled_at,
+                created_at,
+                updated_at,
+                sync_cursor
+            )
+            VALUES (
+                UUID(),
+                ?,
+                ?,
+                'ACTIVE',
+                UTC_TIMESTAMP(6),
+                NULL,
+                NULL,
+                UTC_TIMESTAMP(6),
+                UTC_TIMESTAMP(6),
+                0
+            )
+            `,
+            [
+                companyId,
+                plans[0].id
+            ]
+        );
+
+        return companyId;
     }
 
     public async update(

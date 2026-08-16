@@ -6,9 +6,19 @@ import { ConflictError } from '../errors/ConflictError.js';
 import { NotFoundError } from '../errors/NotFoundError.js';
 
 import { CompanyRepository } from '../repositories/CompanyRepository.js';
+import {
+    CompanySubscriptionRepository
+} from '../repositories/CompanySubscriptionRepository.js';
+import {
+    UserSubscriptionRepository
+} from '../repositories/UserSubscriptionRepository.js';
 import { CompanyUserRepository } from '../repositories/CompanyUserRepository.js';
 import { RoleRepository } from '../repositories/RoleRepository.js';
 import { UserRepository } from '../repositories/UserRepository.js';
+
+import {
+    RegisterInput
+} from '../schemas/auth/RegisterSchema.js';
 
 export interface AuthUser {
     userId: string;
@@ -41,6 +51,124 @@ export class AuthService {
 
     private readonly roles =
     new RoleRepository();
+
+    private readonly userSubscriptions =
+    new UserSubscriptionRepository();
+
+    private readonly companySubscriptions =
+    new CompanySubscriptionRepository();
+
+    public async register(
+        input: RegisterInput
+    ): Promise<AuthUser> {
+
+        const email =
+        input.email.trim().toLowerCase();
+
+        const existingUser =
+        await this.users.findByEmail(
+            email
+        );
+
+        if (existingUser) {
+
+            throw new ConflictError(
+                'Cette adresse e-mail est déjà utilisée.'
+            );
+
+        }
+
+        const passwordHash =
+        await argon2.hash(
+            input.password
+        );
+
+        const userId =
+        await this.users.create({
+
+            email,
+
+            password_hash:
+            passwordHash,
+
+            firstname:
+            input.first_name,
+
+            lastname:
+            input.last_name,
+
+            phone:
+            input.phone ?? null
+
+        });
+
+        const companyId =
+        await this.companies.create({
+
+            name:
+            input.company_name
+
+        });
+
+        const ownerRole =
+        await this.roles.findByCode(
+            'OWNER'
+        );
+
+        if (!ownerRole) {
+
+            throw new NotFoundError(
+                'Rôle OWNER introuvable.'
+            );
+
+        }
+
+        await this.companyUsers.create(
+            companyId,
+            userId,
+            ownerRole.id,
+            false
+        );
+
+        const company =
+        await this.companies.findById(
+            companyId
+        );
+
+        if (!company) {
+
+            throw new NotFoundError(
+                'Entreprise introuvable après création.'
+            );
+
+        }
+
+        return {
+
+            userId,
+
+            companyId,
+
+            roleId:
+            ownerRole.id,
+
+            roleCode:
+            ownerRole.code,
+
+            firstName:
+            input.first_name,
+
+            lastName:
+            input.last_name,
+
+            email,
+
+            companyName:
+            company.name
+
+        };
+
+    }
 
     public async login(
         email: string,
@@ -149,6 +277,24 @@ export class AuthService {
             company.id
         );
 
+        const userSubscription =
+        await this.userSubscriptions
+        .findActiveByUserId(
+            user.id
+        );
+
+        const companySubscription =
+        await this.companySubscriptions
+        .findActiveByCompanyId(
+            company.id
+        );
+
+        const currentUsers =
+        await this.companyUsers
+        .countPilotsByCompanyId(
+            company.id
+        );
+
         return {
 
             userId:
@@ -192,6 +338,20 @@ export class AuthService {
         companyId: string;
         companyName: string;
         roleCode: string;
+
+        userPlan: {
+            code: string;
+            label: string;
+            adsEnabled: boolean;
+        } | null;
+
+        companyPlan: {
+            code: string;
+            label: string;
+            maxUsers: number | null;
+        } | null;
+
+        currentUsers: number;
     }> {
 
         const user =
@@ -276,6 +436,24 @@ export class AuthService {
 
         }
 
+        const userSubscription =
+        await this.userSubscriptions
+        .findActiveByUserId(
+            user.id
+        );
+
+        const companySubscription =
+        await this.companySubscriptions
+        .findActiveByCompanyId(
+            company.id
+        );
+
+        const currentUsers =
+        await this.companyUsers
+        .countPilotsByCompanyId(
+            company.id
+        );
+
         return {
 
             userId:
@@ -303,7 +481,39 @@ export class AuthService {
             company.name,
 
             roleCode:
-            role.code
+            role.code,
+
+            userPlan:
+            userSubscription
+                ? {
+                    code:
+                    userSubscription.plan_code,
+
+                    label:
+                    userSubscription.plan_label,
+
+                    adsEnabled:
+                    Boolean(
+                        userSubscription.ads_enabled
+                    )
+                }
+                : null,
+
+            companyPlan:
+            companySubscription
+                ? {
+                    code:
+                    companySubscription.plan_code,
+
+                    label:
+                    companySubscription.plan_label,
+
+                    maxUsers:
+                    companySubscription.max_users
+                }
+                : null,
+
+            currentUsers
 
         };
 

@@ -155,6 +155,26 @@ export class CompanyUserRepository extends BaseRepository {
         return rows;
     }
 
+    public async countPilotsByCompanyId(
+        companyId: string
+    ): Promise<number> {
+
+        const [rows] =
+        await this.db.query<Array<RowDataPacket & { count: number }>>(
+            `
+            SELECT COUNT(*) AS count
+            FROM company_users
+            WHERE company_id = ?
+            AND is_pilot = TRUE
+            AND is_active = TRUE
+            AND deleted_at IS NULL
+            `,
+            [companyId]
+        );
+
+        return Number(rows[0]?.count ?? 0);
+    }
+
     public async findPilotsByCompanyId(
         companyId: string
     ): Promise<CompanyMember[]> {

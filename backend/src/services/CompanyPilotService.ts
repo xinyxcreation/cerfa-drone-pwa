@@ -5,6 +5,9 @@ import { ConflictError } from '../errors/ConflictError.js';
 import { NotFoundError } from '../errors/NotFoundError.js';
 
 import { CompanyRepository } from '../repositories/CompanyRepository.js';
+import {
+    CompanySubscriptionRepository
+} from '../repositories/CompanySubscriptionRepository.js';
 import { CompanyUserRepository } from '../repositories/CompanyUserRepository.js';
 import { RoleRepository } from '../repositories/RoleRepository.js';
 import { UserRepository } from '../repositories/UserRepository.js';
@@ -40,6 +43,9 @@ export class CompanyPilotService {
     private readonly roles =
     new RoleRepository();
 
+    private readonly companySubscriptions =
+    new CompanySubscriptionRepository();
+
     // ============================================================
     // AJOUTER / RATTACHER UN PILOTE
     // ============================================================
@@ -73,6 +79,37 @@ export class CompanyPilotService {
         if (!company.is_active) {
             throw new AuthorizationError(
                 'Entreprise désactivée.'
+            );
+        }
+
+        // --------------------------------------------------------
+        // LIMITE DU PLAN ENTREPRISE
+        // --------------------------------------------------------
+
+        const subscription =
+        await this.companySubscriptions
+        .findActiveByCompanyId(
+            companyId
+        );
+
+        if (!subscription) {
+            throw new AuthorizationError(
+                'Aucun abonnement entreprise actif.'
+            );
+        }
+
+        const currentPilots =
+        await this.companyUsers
+        .countPilotsByCompanyId(
+            companyId
+        );
+
+        if (
+            subscription.max_users !== null &&
+            currentPilots >= subscription.max_users
+        ) {
+            throw new ConflictError(
+                `La limite de ${subscription.max_users} utilisateur(s) de votre offre ${subscription.plan_label} est atteinte.`
             );
         }
 
