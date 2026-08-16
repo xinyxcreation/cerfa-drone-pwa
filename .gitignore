@@ -2,3 +2,8 @@ node_modules/
 .dart_tool/
 build/
 .env
+
+.token
+.admin-token
+.moderator-token
+.pilot-token
