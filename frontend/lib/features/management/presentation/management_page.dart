@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../auth/models/current_user.dart';
 import '../models/company_pilot.dart';
 import '../services/pilots_service.dart';
-import '../models/company.dart';
-import '../services/company_service.dart';
+import '../../models/company.dart';
+import '../../company/services/company_service.dart';
 
 class ManagementPage extends StatelessWidget {
   const ManagementPage({

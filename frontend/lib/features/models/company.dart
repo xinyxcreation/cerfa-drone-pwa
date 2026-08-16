@@ -23,6 +23,7 @@ class Company {
   });
 
   final String id;
+
   final String name;
   final String? legalName;
   final String? contactName;
@@ -60,32 +61,71 @@ class Company {
       contactName: json['contact_name'] as String?,
       siret: json['siret'] as String?,
       alphatangoOperatorNumber:
-      json['alphatango_operator_number'] as String? ?? '',
+          json['alphatango_operator_number']
+              as String? ??
+          '',
       email: json['email'] as String?,
       phone: json['phone'] as String?,
       websiteUrl: json['website_url'] as String?,
-      addressLine1: json['address_line_1'] as String?,
-      addressLine2: json['address_line_2'] as String?,
-      postalCode: json['postal_code'] as String?,
+      addressLine1:
+          json['address_line_1'] as String?,
+      addressLine2:
+          json['address_line_2'] as String?,
+      postalCode:
+          json['postal_code'] as String?,
       city: json['city'] as String?,
-      country: json['country'] as String? ?? 'France',
-      logoPath: json['logo_path'] as String?,
-      signaturePath: json['signature_path'] as String?,
-      isActive: json['is_active'] == true ||
-      json['is_active'] == 1,
+      country:
+          json['country'] as String? ?? 'France',
+      logoPath:
+          json['logo_path'] as String?,
+      signaturePath:
+          json['signature_path'] as String?,
+      isActive:
+          json['is_active'] == true ||
+          json['is_active'] == 1,
       notes: json['notes'] as String?,
-      createdAt: _date(json['created_at']),
-      updatedAt: _date(json['updated_at']),
+      createdAt:
+          _parseDate(json['created_at']),
+      updatedAt:
+          _parseDate(json['updated_at']),
     );
   }
 
-  static DateTime? _date(dynamic value) {
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      'name': name,
+      'legal_name': legalName,
+      'contact_name': contactName,
+      'siret': siret,
+      'alphatango_operator_number':
+          alphatangoOperatorNumber,
+      'email': email,
+      'phone': phone,
+      'website_url': websiteUrl,
+      'address_line_1': addressLine1,
+      'address_line_2': addressLine2,
+      'postal_code': postalCode,
+      'city': city,
+      'country': country,
+      'notes': notes,
+    };
+  }
+
+  static DateTime? _parseDate(
+    dynamic value,
+  ) {
     if (value == null) {
       return null;
     }
 
-    return DateTime.tryParse(
-      value.toString(),
-    );
+    if (value is DateTime) {
+      return value;
+    }
+
+    if (value is String) {
+      return DateTime.tryParse(value);
+    }
+
+    return null;
   }
 }

@@ -5,6 +5,8 @@ import '../../features/home/presentation/home_page.dart';
 import '../../features/management/presentation/management_page.dart';
 import '../../features/profile/presentation/profile_page.dart';
 
+const Color red = Color(0xFFE30613);
+
 class AppShell extends StatefulWidget {
   const AppShell({
     super.key,
@@ -120,8 +122,6 @@ class _BottomNavigation extends StatelessWidget {
 
   final int currentIndex;
   final ValueChanged<int> onSelected;
-
-  static const Color red = Color(0xFFE30613);
 
   @override
   Widget build(BuildContext context) {
@@ -268,8 +268,6 @@ class _NavigationItem extends StatelessWidget {
 
   final ValueChanged<int> onTap;
 
-  static const Color red = Color(0xFFE30613);
-
   @override
   Widget build(BuildContext context) {
     final bool active = index == currentIndex;
@@ -334,8 +332,6 @@ class _NewMissionButton extends StatelessWidget {
 
   final bool active;
   final VoidCallback onTap;
-
-  static const Color red = Color(0xFFE30613);
 
   @override
   Widget build(BuildContext context) {
