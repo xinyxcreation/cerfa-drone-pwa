@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/auth/admin_auth_service.dart';
+import '../../core/auth/auth_service.dart';
 import '../subscriptions/subscriptions_page.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -71,7 +71,7 @@ class _DashboardPageState
             onPressed: () async {
               await widget.auth.logout();
 
-              if (!mounted) {
+              if (!context.mounted) {
                 return;
               }
 

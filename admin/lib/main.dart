@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'core/auth/admin_auth_service.dart';
-import 'core/theme/admin_theme.dart';
+import 'core/auth/auth_service.dart';
+import 'core/theme/app_theme.dart';
 import 'features/auth/login_page.dart';
 import 'features/dashboard/dashboard_page.dart';
 

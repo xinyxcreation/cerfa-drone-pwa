@@ -1,109 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-
-import '../../core/auth/admin_auth_service.dart';
-import '../../core/config/api_config.dart';
-import '../../core/network/api_client.dart';
-
-class SubscriptionPrice {
-
-  String period;
-  int amountCents;
-  String currency;
-
-  SubscriptionPrice({
-    required this.period,
-    required this.amountCents,
-    required this.currency,
-  });
-
-  factory SubscriptionPrice.fromJson(
-      Map<String, dynamic> json) {
-
-    return SubscriptionPrice(
-      period:
-          json['billing_period'],
-      amountCents:
-          json['amount_cents'],
-      currency:
-          json['currency'],
-    );
-
-  }
-
-}
-
-class SubscriptionPlan {
-
-  final String id;
-  final String code;
-  final String type;
-
-  String label;
-
-  bool adsEnabled;
-
-  int? maxUsers;
-
-  bool isActive;
-
-  final List<SubscriptionPrice>
-      prices;
-
-  SubscriptionPlan({
-    required this.id,
-    required this.code,
-    required this.type,
-    required this.label,
-    required this.adsEnabled,
-    required this.maxUsers,
-    required this.isActive,
-    required this.prices,
-  });
-
-  factory SubscriptionPlan.fromJson(
-      Map<String, dynamic> json) {
-
-    return SubscriptionPlan(
-      id:
-          json['id'],
-      code:
-          json['code'],
-      type:
-          json['type'],
-      label:
-          json['label'],
-      adsEnabled:
-          json['ads_enabled'] == true,
-      maxUsers:
-          json['max_users'],
-      isActive:
-          json['is_active'] == true,
-      prices:
-          (json['prices'] as List)
-              .map(
-                (item) =>
-                    SubscriptionPrice
-                        .fromJson(
-                  item,
-                ),
-              )
-              .toList(),
-    );
-
-  }
-
-  SubscriptionPrice price(
-      String period) {
-
-    return prices.firstWhere(
-      (item) =>
-          item.period == period,
-    );
-
-  }
-
-}
+import '../../core/auth/auth_service.dart';
+import '../../core/subscriptions/subscription_service.dart';
+import '../../core/subscriptions/subscription_plan.dart';
 
 class SubscriptionsPage
     extends StatefulWidget {
@@ -134,13 +32,15 @@ class _SubscriptionsPageState
   @override
   void initState() {
     super.initState();
+
+    service = SubscriptionService(
+      token: widget.auth.token ?? '',
+    );
+
     load();
   }
 
-  ApiClient get api =>
-      ApiClient(
-        token: widget.auth.token,
-      );
+  late final SubscriptionService service;
 
   Future<void> load() async {
 
@@ -151,49 +51,10 @@ class _SubscriptionsPageState
 
     try {
 
-      final response =
-          await api.get(
-        '${ApiConfig.baseUrl}/admin/subscriptions/plans',
-      );
-
-      final data =
-          response.data;
-
       plans =
-          (data['plans'] as List)
-              .map(
-                (item) =>
-                    SubscriptionPlan
-                        .fromJson(
-                  item,
-                ),
-              )
-              .toList();
+          await service.loadPlans();
 
-      const order = [
-        'FREE',
-        'PREMIUM',
-        'FREE_COMPANY',
-        'STARTER',
-        'PRO',
-        'BUSINESS',
-      ];
-
-      plans.sort(
-        (a, b) =>
-            order.indexOf(a.code)
-                .compareTo(
-                  order.indexOf(b.code),
-                ),
-      );
-
-    } on DioException catch (e) {
-
-      error =
-          e.response?.data?['message'] ??
-              'Erreur de chargement.';
-
-    } catch (_) {
+    } catch (e) {
 
       error =
           'Erreur de chargement.';
@@ -210,48 +71,14 @@ class _SubscriptionsPageState
 
   }
 
+
   Future<void> savePlan(
       SubscriptionPlan plan) async {
 
     try {
 
-      await api.put(
-        '${ApiConfig.baseUrl}/admin/subscriptions/plans/${plan.code}',
-        data: {
-          'label': plan.label,
-          'ads_enabled':
-              plan.adsEnabled,
-          'max_users':
-              plan.maxUsers,
-          'is_active':
-              plan.isActive,
-        },
-      );
-
-      final monthly =
-          plan.price('MONTHLY');
-
-      await api.put(
-        '${ApiConfig.baseUrl}/admin/subscriptions/plans/${plan.code}/prices/MONTHLY',
-        data: {
-          'amount_cents':
-              monthly.amountCents,
-          'currency':
-              monthly.currency,
-        },
-      );
-
-      final yearly =
-          plan.price('YEARLY');
-
-      await api.put(
-        '${ApiConfig.baseUrl}/admin/subscriptions/plans/${plan.code}/prices/YEARLY',
-        data: {
-          'amount_cents':
-              yearly.amountCents,
-          'currency':
-              yearly.currency,
-        },
+      await service.savePlan(
+        plan,
       );
 
       if (mounted) {
@@ -268,7 +95,7 @@ class _SubscriptionsPageState
 
       }
 
-    } catch (_) {
+    } catch (e) {
 
       if (mounted) {
 
@@ -287,6 +114,7 @@ class _SubscriptionsPageState
     }
 
   }
+
 
   @override
   Widget build(BuildContext context) {
